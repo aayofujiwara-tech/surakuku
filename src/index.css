@@ -1,0 +1,62 @@
+:root {
+  --primary: #6C63FF;
+  --primary-light: #9D97FF;
+  --secondary: #FF6B6B;
+  --success: #4CAF50;
+  --warning: #FFB74D;
+  --danger: #E53E3E;
+  --bg: #F0F4FF;
+  --bg-card: #FFFFFF;
+  --text: #2D3748;
+  --text-light: #718096;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --radius: 12px;
+
+  font-family: 'Rounded Mplus 1c', 'Hiragino Maru Gothic Pro', 'BIZ UDPGothic', system-ui, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: var(--text);
+  background-color: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  min-width: 320px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #E8EAF6, #F3E5F5, #E1F5FE);
+}
+
+#root {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+button {
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
