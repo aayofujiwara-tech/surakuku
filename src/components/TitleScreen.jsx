@@ -1,6 +1,6 @@
 import { loadSave } from '../utils/saveManager';
 
-export default function TitleScreen({ onNewGame, onContinue }) {
+export default function TitleScreen({ onNewGame, onContinue, onTraining }) {
   const hasSave = !!loadSave();
 
   return (
@@ -43,6 +43,9 @@ export default function TitleScreen({ onNewGame, onContinue }) {
             つづきから
           </button>
         )}
+        <button className="title-btn secondary-btn" onClick={onTraining}>
+          とっくんモード
+        </button>
       </div>
 
       <div className="title-footer">

@@ -12,6 +12,7 @@ const DEFAULT_SAVE = {
   skillCount: 0,         // 必殺技発動回数
   milestones: {},        // マイルストーン記録
   stageRecords: {},      // ステージごとの記録
+  trainingRecords: {},   // とっくんモードの記録（段ごと）
 };
 
 export function loadSave() {
@@ -77,6 +78,21 @@ export function updateSaveAfterBattle(save, { dan, maxCombo, totalDamage, skillC
   if (updated.clearedDans.length === 9 && !updated.milestones.allCleared) {
     updated.milestones.allCleared = new Date().toISOString();
   }
+
+  saveSave(updated);
+  return updated;
+}
+
+export function updateSaveAfterTraining(save, { dan, time, mistakes, perfect }) {
+  const updated = { ...save };
+  if (!updated.trainingRecords) updated.trainingRecords = {};
+
+  const prev = updated.trainingRecords[dan];
+  updated.trainingRecords[dan] = {
+    bestTime: prev?.bestTime ? Math.min(prev.bestTime, time) : time,
+    perfectCount: (prev?.perfectCount || 0) + (perfect ? 1 : 0),
+    totalAttempts: (prev?.totalAttempts || 0) + 1,
+  };
 
   saveSave(updated);
   return updated;

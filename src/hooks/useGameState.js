@@ -3,7 +3,7 @@ import { PLAYER_MAX_HP } from '../data/gameData';
 
 const initialState = {
   // 画面遷移
-  screen: 'title', // title, attributeSelect, worldMap, battle, result, growth, slimeStatus
+  screen: 'title', // title, attributeSelect, worldMap, battle, result, growth, slimeStatus, trainingSelect, training
 
   // プレイヤー情報
   save: null,
@@ -11,6 +11,9 @@ const initialState = {
   // バトル関連
   currentStageId: null,
   battleResult: null, // { won, maxCombo, totalDamage, skillCount }
+
+  // とっくんモード
+  trainingDan: null,
 };
 
 function gameReducer(state, action) {
@@ -66,6 +69,15 @@ function gameReducer(state, action) {
     case 'VIEW_SLIME':
       return { ...state, screen: 'slimeStatus' };
 
+    case 'OPEN_TRAINING_SELECT':
+      return { ...state, screen: 'trainingSelect' };
+
+    case 'START_TRAINING':
+      return { ...state, screen: 'training', trainingDan: action.dan };
+
+    case 'FINISH_TRAINING':
+      return { ...state, save: action.save, screen: 'trainingSelect', trainingDan: null };
+
     case 'UPDATE_SAVE':
       return { ...state, save: action.save };
 
@@ -113,6 +125,18 @@ export function useGameState() {
     dispatch({ type: 'UPDATE_SAVE', save });
   }, []);
 
+  const openTrainingSelect = useCallback(() => {
+    dispatch({ type: 'OPEN_TRAINING_SELECT' });
+  }, []);
+
+  const startTraining = useCallback((dan) => {
+    dispatch({ type: 'START_TRAINING', dan });
+  }, []);
+
+  const finishTraining = useCallback((save) => {
+    dispatch({ type: 'FINISH_TRAINING', save });
+  }, []);
+
   return {
     state,
     setScreen,
@@ -124,5 +148,8 @@ export function useGameState() {
     returnToMap,
     viewSlime,
     updateSave,
+    openTrainingSelect,
+    startTraining,
+    finishTraining,
   };
 }
