@@ -1,5 +1,5 @@
 import { useGameState } from './hooks/useGameState';
-import { loadSave, createNewSave, updateSaveAfterBattle, updateSaveAfterTraining, updateSaveAfterTimeAttack, deleteSave } from './utils/saveManager';
+import { loadSave, createNewSave, updateSaveAfterBattle, updateSaveAfterTraining, updateSaveAfterTimeAttack, deleteSave, unlockAllStages as unlockAllStagesSave, saveSave } from './utils/saveManager';
 import { STAGES } from './data/gameData';
 import TitleScreen from './components/TitleScreen';
 import AttributeSelect from './components/AttributeSelect';
@@ -33,6 +33,7 @@ export default function App() {
     finishTimeAttack,
     viewCollection,
     openSeniorMode,
+    unlockAllStages,
     backToTitle,
   } = useGameState();
 
@@ -49,8 +50,20 @@ export default function App() {
   };
 
   const handleAttributeSelect = (attributeId) => {
-    const save = createNewSave(attributeId);
-    newGame(save);
+    if (state.save && state.save.attribute === null) {
+      const updated = { ...state.save, attribute: attributeId };
+      saveSave(updated);
+      newGame(updated);
+    } else {
+      const save = createNewSave(attributeId);
+      newGame(save);
+    }
+  };
+
+  const handleUnlockAll = () => {
+    const existing = loadSave();
+    const save = unlockAllStagesSave(existing);
+    unlockAllStages(save);
   };
 
   const handleSelectStage = (stageId) => {
@@ -97,7 +110,7 @@ export default function App() {
   return (
     <div className="game-container">
       {state.screen === 'title' && (
-        <TitleScreen onNewGame={handleNewGame} onContinue={handleContinue} onTraining={openTrainingSelect} onSeniorMode={openSeniorMode} />
+        <TitleScreen onNewGame={handleNewGame} onContinue={handleContinue} onTraining={openTrainingSelect} onSeniorMode={openSeniorMode} onUnlockAll={handleUnlockAll} />
       )}
 
       {state.screen === 'attributeSelect' && (

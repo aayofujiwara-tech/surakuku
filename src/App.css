@@ -110,6 +110,87 @@
   font-size: 0.8rem;
 }
 
+/* Title logo tap animations */
+.title-logo {
+  cursor: default;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.logo-shake {
+  animation: logoShake 0.15s ease-in-out infinite;
+}
+
+@keyframes logoShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px) rotate(-1deg); }
+  75% { transform: translateX(2px) rotate(1deg); }
+}
+
+.logo-flash {
+  animation: logoFlash 0.6s ease-out;
+}
+
+@keyframes logoFlash {
+  0% { filter: brightness(1); transform: scale(1); }
+  30% { filter: brightness(3); transform: scale(1.1); }
+  60% { filter: brightness(2); transform: scale(1.05); }
+  100% { filter: brightness(1); transform: scale(1); }
+}
+
+/* Unlock dialog */
+.unlock-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  animation: fadeIn 0.2s ease;
+}
+
+.unlock-dialog {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem 1.5rem;
+  max-width: 300px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.unlock-dialog-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 1rem;
+}
+
+.unlock-dialog-message {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--text);
+  margin-bottom: 1.5rem;
+}
+
+.unlock-dialog-buttons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.unlock-dialog-buttons .primary-btn,
+.unlock-dialog-buttons .secondary-btn {
+  flex: 1;
+  margin: 0;
+  padding: 0.7rem;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 /* ===========================
    Attribute Select
    =========================== */

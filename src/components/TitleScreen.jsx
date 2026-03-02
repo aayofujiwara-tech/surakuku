@@ -1,12 +1,58 @@
+import { useState, useRef, useCallback } from 'react';
 import { loadSave } from '../utils/saveManager';
 
-export default function TitleScreen({ onNewGame, onContinue, onTraining, onSeniorMode }) {
+const TAP_THRESHOLD = 10;
+const TAP_TIMEOUT = 3000;
+const SHAKE_START = 7;
+
+export default function TitleScreen({ onNewGame, onContinue, onTraining, onSeniorMode, onUnlockAll }) {
   const hasSave = !!loadSave();
+  const [showDialog, setShowDialog] = useState(false);
+  const [logoClass, setLogoClass] = useState('');
+  const tapCountRef = useRef(0);
+  const timerRef = useRef(null);
+
+  const handleLogoTap = useCallback(() => {
+    if (showDialog) return;
+
+    clearTimeout(timerRef.current);
+    tapCountRef.current += 1;
+    const count = tapCountRef.current;
+
+    if (count >= TAP_THRESHOLD) {
+      setLogoClass('logo-flash');
+      tapCountRef.current = 0;
+      setTimeout(() => {
+        setLogoClass('');
+        setShowDialog(true);
+      }, 600);
+      return;
+    }
+
+    if (count >= SHAKE_START) {
+      setLogoClass('logo-shake');
+    }
+
+    timerRef.current = setTimeout(() => {
+      tapCountRef.current = 0;
+      setLogoClass('');
+    }, TAP_TIMEOUT);
+  }, [showDialog]);
+
+  const handleConfirm = () => {
+    setShowDialog(false);
+    onUnlockAll();
+  };
+
+  const handleCancel = () => {
+    setShowDialog(false);
+    tapCountRef.current = 0;
+  };
 
   return (
     <div className="title-screen">
-      <div className="title-logo">
-        <h1 className="title-text">スラくく</h1>
+      <div className="title-logo" onClick={handleLogoTap}>
+        <h1 className={`title-text ${logoClass}`}>スラくく</h1>
         <p className="title-subtitle">キミの九九が、カタチになる。</p>
       </div>
 
@@ -64,6 +110,21 @@ export default function TitleScreen({ onNewGame, onContinue, onTraining, onSenio
       <div className="title-footer">
         <p>九九モンスター育成バトルゲーム</p>
       </div>
+
+      {showDialog && (
+        <div className="unlock-dialog-overlay">
+          <div className="unlock-dialog">
+            <p className="unlock-dialog-title">ぜんかいほうモード！</p>
+            <p className="unlock-dialog-message">
+              すべてのステージが<br />あそべるようになるよ。<br />タネもえらびなおせるよ！
+            </p>
+            <div className="unlock-dialog-buttons">
+              <button className="primary-btn" onClick={handleConfirm}>OK</button>
+              <button className="secondary-btn" onClick={handleCancel}>やめる</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

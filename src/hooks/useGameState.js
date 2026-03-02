@@ -90,6 +90,13 @@ function gameReducer(state, action) {
     case 'OPEN_SENIOR_MODE':
       return { ...state, screen: 'seniorMode' };
 
+    case 'UNLOCK_ALL_STAGES':
+      return {
+        ...state,
+        save: action.save,
+        screen: 'attributeSelect',
+      };
+
     case 'BACK_TO_TITLE':
       return {
         ...state,
@@ -174,6 +181,10 @@ export function useGameState() {
     dispatch({ type: 'OPEN_SENIOR_MODE' });
   }, []);
 
+  const unlockAllStages = useCallback((save) => {
+    dispatch({ type: 'UNLOCK_ALL_STAGES', save });
+  }, []);
+
   const backToTitle = useCallback(() => {
     dispatch({ type: 'BACK_TO_TITLE' });
   }, []);
@@ -196,6 +207,7 @@ export function useGameState() {
     startTimeAttack,
     finishTimeAttack,
     openSeniorMode,
+    unlockAllStages,
     backToTitle,
   };
 }

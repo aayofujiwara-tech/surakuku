@@ -99,6 +99,17 @@ export function updateSaveAfterTraining(save, { dan, time, mistakes, perfect }) 
   return updated;
 }
 
+export function unlockAllStages(existingSave) {
+  const base = existingSave || { ...DEFAULT_SAVE };
+  const updated = {
+    ...base,
+    attribute: null,
+    clearedDans: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0],
+  };
+  saveSave(updated);
+  return updated;
+}
+
 export function updateSaveAfterTimeAttack(save, { time }) {
   const updated = { ...save };
   if (!updated.timeAttackBest || time < updated.timeAttackBest) {
