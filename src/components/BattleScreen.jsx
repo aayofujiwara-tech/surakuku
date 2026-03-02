@@ -53,7 +53,7 @@ export default function BattleScreen({ stageId, save, onWin, onLose }) {
   // 4択の選択肢を生成
   useEffect(() => {
     if (currentQuestion && difficulty.answerMode === 'choice') {
-      setChoices(generateChoices(currentQuestion.answer, currentQuestion.a));
+      setChoices(generateChoices(currentQuestion.a, currentQuestion.b, currentQuestion.answer, difficulty.level));
     }
   }, [currentIndex]);
 

@@ -59,33 +59,141 @@ export function generateStageQuestions(dan) {
   return questions;
 }
 
-// 4択の選択肢を生成（正解1つ + 誤答3つ）
-export function generateChoices(correctAnswer, dan) {
-  const choices = new Set([correctAnswer]);
+// 配列をシャッフル（Fisher-Yates）
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 
-  // 紛らわしい誤答を生成
-  while (choices.size < 4) {
-    let wrong;
-    const strategy = Math.random();
+// 配列からランダムに1つ選ぶ
+function pickRandom(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
 
-    if (strategy < 0.3) {
-      // 隣の段の答え
-      const nearDan = dan + (Math.random() < 0.5 ? 1 : -1);
-      const b = Math.floor(Math.random() * 9) + 1;
-      wrong = Math.max(1, nearDan) * b;
-    } else if (strategy < 0.6) {
-      // ±1〜9のずれ
-      wrong = correctAnswer + (Math.floor(Math.random() * 9) + 1) * (Math.random() < 0.5 ? 1 : -1);
-    } else {
-      // 同じ段のランダムな答え
-      wrong = dan * (Math.floor(Math.random() * 9) + 1);
+/**
+ * 4択の選択肢を生成（正解1つ + 紛らわしい誤答3つ）
+ *
+ * @param {number} dan - 段（例: 3）
+ * @param {number} n - 掛ける数（例: 7）
+ * @param {number} answer - 正解（例: 21）
+ * @param {'easy'|'medium'|'hard'} difficultyLevel - 難易度
+ * @returns {number[]} シャッフルされた4つの選択肢
+ */
+export function generateChoices(dan, n, answer, difficultyLevel) {
+  // カテゴリ別の候補を生成
+  const catA = []; // 同じ段の隣の答え
+  const catB = []; // 隣の段の同じ数
+  const catC = []; // 正解 ± 小さいズレ
+  const catD = []; // 同じ一の位を持つ九九の答え
+  const catE = []; // 十の位が同じ九九の答え
+
+  // カテゴリA：同じ段の隣の答え dan × (n ± 1)
+  if (n > 1) {
+    const v = dan * (n - 1);
+    if (v !== answer && v > 0) catA.push(v);
+  }
+  if (n < 9) {
+    const v = dan * (n + 1);
+    if (v !== answer && v > 0) catA.push(v);
+  }
+
+  // カテゴリB：隣の段の同じ数 (dan ± 1) × n
+  if (dan > 1) {
+    const v = (dan - 1) * n;
+    if (v !== answer && v > 0) catB.push(v);
+  }
+  if (dan < 9) {
+    const v = (dan + 1) * n;
+    if (v !== answer && v > 0) catB.push(v);
+  }
+
+  // カテゴリC：正解 ± 小さいズレ
+  for (const offset of [1, -1, 2, -2, 3, -3]) {
+    const v = answer + offset;
+    if (v > 0 && v !== answer) catC.push(v);
+  }
+
+  // 正解から離れすぎない範囲（正解の大きさに応じて調整）
+  const maxDistance = Math.max(15, Math.floor(answer * 0.6));
+
+  // カテゴリD：同じ一の位を持つ九九の答え（距離制限付き）
+  const onesDigit = answer % 10;
+  for (let d = 1; d <= 9; d++) {
+    for (let m = 1; m <= 9; m++) {
+      const v = d * m;
+      if (v % 10 === onesDigit && v !== answer && Math.abs(v - answer) <= maxDistance) {
+        catD.push(v);
+      }
     }
+  }
+  // 重複除去
+  const catDUnique = [...new Set(catD)];
 
-    if (wrong > 0 && wrong !== correctAnswer) {
-      choices.add(wrong);
+  // カテゴリE：十の位が同じ九九の答え
+  const tensDigit = Math.floor(answer / 10);
+  for (let d = 1; d <= 9; d++) {
+    for (let m = 1; m <= 9; m++) {
+      const v = d * m;
+      if (Math.floor(v / 10) === tensDigit && v !== answer) catE.push(v);
+    }
+  }
+  const catEUnique = [...new Set(catE)];
+
+  const selected = new Set();
+
+  // 選択済みに追加するヘルパー（重複・正解チェック付き）
+  const tryAdd = (value) => {
+    if (value > 0 && value !== answer && !selected.has(value)) {
+      selected.add(value);
+      return true;
+    }
+    return false;
+  };
+
+  // カテゴリの候補からまだ選ばれていない値を1つ選ぶ
+  const pickFromCategory = (candidates) => {
+    const available = candidates.filter((v) => v > 0 && v !== answer && !selected.has(v));
+    if (available.length === 0) return false;
+    return tryAdd(pickRandom(available));
+  };
+
+  if (difficultyLevel === 'medium') {
+    // 中難度：A1つ + C1つ（±1〜2の近い値）+ D1つ
+    pickFromCategory(catA);
+    // Cから ±1〜2 のみ
+    const closeCatC = catC.filter((v) => Math.abs(v - answer) <= 2);
+    pickFromCategory(closeCatC.length > 0 ? closeCatC : catC);
+    pickFromCategory(catDUnique);
+  } else {
+    // 低難度（デフォルト）：A1つ + B1つ + C〜E1つ
+    pickFromCategory(catA);
+    pickFromCategory(catB);
+    // 残り1つはC〜Eからランダム
+    const remaining = [...catC, ...catDUnique, ...catEUnique];
+    pickFromCategory(remaining);
+  }
+
+  // 足りない場合のフォールバック（全カテゴリから、正解に近い順で補充）
+  if (selected.size < 3) {
+    const allCandidates = [...new Set([...catA, ...catB, ...catC, ...catDUnique, ...catEUnique])];
+    allCandidates.sort((a, b) => Math.abs(a - answer) - Math.abs(b - answer));
+    for (const v of allCandidates) {
+      if (selected.size >= 3) break;
+      tryAdd(v);
     }
   }
 
-  // シャッフル
-  return [...choices].sort(() => Math.random() - 0.5);
+  // それでも足りない場合（理論上ほぼないが安全策）
+  let emergencyOffset = 1;
+  while (selected.size < 3) {
+    const v = answer + emergencyOffset;
+    if (v > 0) tryAdd(v);
+    emergencyOffset = emergencyOffset > 0 ? -emergencyOffset : -emergencyOffset + 1;
+  }
+
+  return shuffle([answer, ...selected]);
 }

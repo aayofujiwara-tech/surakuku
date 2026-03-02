@@ -171,9 +171,9 @@ export const GROWTH_STAGES = [
 
 // 段 → 難易度マッピング
 export function getDifficulty(dan) {
-  if (dan >= 1 && dan <= 3) return DIFFICULTY.easy;
-  if (dan >= 4 && dan <= 6) return DIFFICULTY.medium;
-  return DIFFICULTY.hard;
+  if (dan >= 1 && dan <= 3) return { ...DIFFICULTY.easy, level: 'easy' };
+  if (dan >= 4 && dan <= 6) return { ...DIFFICULTY.medium, level: 'medium' };
+  return { ...DIFFICULTY.hard, level: 'hard' };
 }
 
 // プレイヤーHP
