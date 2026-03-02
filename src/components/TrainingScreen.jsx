@@ -30,7 +30,7 @@ function generateTrainingQuestions(dan) {
   return questions;
 }
 
-export default function TrainingScreen({ dan, onFinish, onBack }) {
+export default function TrainingScreen({ dan, onFinish, onBack, onBackToTitle }) {
   const difficulty = getDifficulty(dan || 5);
 
   const [questions] = useState(() => generateTrainingQuestions(dan));
@@ -128,6 +128,9 @@ export default function TrainingScreen({ dan, onFinish, onBack }) {
   if (phase === 'finished') {
     return (
       <div className="training-result-screen">
+        <button className="back-to-title-btn" onClick={onBackToTitle}>
+          ← タイトル
+        </button>
         <h2 className="screen-title">とっくん完了！</h2>
 
         <div className="training-result-card">
@@ -169,8 +172,8 @@ export default function TrainingScreen({ dan, onFinish, onBack }) {
     <div className="training-screen">
       {/* ヘッダー */}
       <div className="training-header">
-        <button className="training-back-btn" onClick={onBack}>
-          ← やめる
+        <button className="training-back-btn" onClick={onBackToTitle}>
+          ← タイトル
         </button>
         <div className="training-info">
           <span className="training-dan-label">

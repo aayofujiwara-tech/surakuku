@@ -1,6 +1,6 @@
 import { loadSave } from '../utils/saveManager';
 
-export default function TrainingSelect({ onSelectDan, onTimeAttack, onBack }) {
+export default function TrainingSelect({ onSelectDan, onTimeAttack, onBack, onBackToTitle }) {
   const save = loadSave();
   const trainingRecords = save?.trainingRecords || {};
 
@@ -13,6 +13,9 @@ export default function TrainingSelect({ onSelectDan, onTimeAttack, onBack }) {
 
   return (
     <div className="training-select-screen">
+      <button className="back-to-title-btn" onClick={onBackToTitle}>
+        ← タイトル
+      </button>
       <h2 className="screen-title">とっくんモード</h2>
       <p className="screen-description">
         れんしゅうしたい段をえらんでね！

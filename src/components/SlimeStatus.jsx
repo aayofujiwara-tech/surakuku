@@ -2,7 +2,7 @@ import { ATTRIBUTES, GROWTH_STAGES } from '../data/gameData';
 import { getEarnedTitles, getTitleProgress, TITLES } from '../data/titles';
 import SlimeSprite, { getGrowthStage } from './SlimeSprite';
 
-export default function SlimeStatus({ save, onBack }) {
+export default function SlimeStatus({ save, onBack, onBackToTitle }) {
   const attr = ATTRIBUTES.find((a) => a.id === save.attribute);
   const stage = getGrowthStage(save.clearedDans);
   const growthInfo = GROWTH_STAGES.find((g) => g.stage === stage) || GROWTH_STAGES[0];
@@ -11,6 +11,9 @@ export default function SlimeStatus({ save, onBack }) {
 
   return (
     <div className="slime-status-screen">
+      <button className="back-to-title-btn" onClick={onBackToTitle}>
+        ← タイトル
+      </button>
       <h2 className="screen-title">
         {attr.emoji} {attr.name.replace('タネ', 'スライム')}
       </h2>

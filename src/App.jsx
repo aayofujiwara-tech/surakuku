@@ -33,6 +33,7 @@ export default function App() {
     finishTimeAttack,
     viewCollection,
     openSeniorMode,
+    backToTitle,
   } = useGameState();
 
   const handleNewGame = () => {
@@ -118,6 +119,7 @@ export default function App() {
           onViewSlime={viewSlime}
           onTraining={openTrainingSelect}
           onCollection={viewCollection}
+          onBackToTitle={backToTitle}
         />
       )}
 
@@ -144,22 +146,24 @@ export default function App() {
           battleResult={state.battleResult}
           onRetry={handleRetry}
           onReturn={returnToMap}
+          onBackToTitle={backToTitle}
         />
       )}
 
       {state.screen === 'slimeStatus' && state.save && (
-        <SlimeStatus save={state.save} onBack={returnToMap} />
+        <SlimeStatus save={state.save} onBack={returnToMap} onBackToTitle={backToTitle} />
       )}
 
       {state.screen === 'collection' && state.save && (
-        <CollectionScreen save={state.save} onBack={returnToMap} />
+        <CollectionScreen save={state.save} onBack={returnToMap} onBackToTitle={backToTitle} />
       )}
 
       {state.screen === 'trainingSelect' && (
         <TrainingSelect
           onSelectDan={startTraining}
           onTimeAttack={startTimeAttack}
-          onBack={() => state.save ? returnToMap() : setScreen('title')}
+          onBack={() => state.save ? returnToMap() : backToTitle()}
+          onBackToTitle={backToTitle}
         />
       )}
 
@@ -168,11 +172,12 @@ export default function App() {
           key={`timeattack-${Date.now()}`}
           onFinish={handleTimeAttackFinish}
           onBack={handleTimeAttackBack}
+          onBackToTitle={backToTitle}
         />
       )}
 
       {state.screen === 'seniorMode' && (
-        <SeniorModeScreen onBack={() => setScreen('title')} />
+        <SeniorModeScreen onBack={backToTitle} />
       )}
 
       {state.screen === 'training' && state.trainingDan !== null && (
@@ -181,6 +186,7 @@ export default function App() {
           dan={state.trainingDan}
           onFinish={handleTrainingFinish}
           onBack={handleTrainingBack}
+          onBackToTitle={backToTitle}
         />
       )}
     </div>

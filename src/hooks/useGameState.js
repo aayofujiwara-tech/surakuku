@@ -90,6 +90,15 @@ function gameReducer(state, action) {
     case 'OPEN_SENIOR_MODE':
       return { ...state, screen: 'seniorMode' };
 
+    case 'BACK_TO_TITLE':
+      return {
+        ...state,
+        screen: 'title',
+        currentStageId: null,
+        battleResult: null,
+        trainingDan: null,
+      };
+
     case 'UPDATE_SAVE':
       return { ...state, save: action.save };
 
@@ -165,6 +174,10 @@ export function useGameState() {
     dispatch({ type: 'OPEN_SENIOR_MODE' });
   }, []);
 
+  const backToTitle = useCallback(() => {
+    dispatch({ type: 'BACK_TO_TITLE' });
+  }, []);
+
   return {
     state,
     setScreen,
@@ -183,5 +196,6 @@ export function useGameState() {
     startTimeAttack,
     finishTimeAttack,
     openSeniorMode,
+    backToTitle,
   };
 }

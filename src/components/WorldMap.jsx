@@ -1,6 +1,6 @@
 import { STAGES } from '../data/gameData';
 
-export default function WorldMap({ save, onSelectStage, onViewSlime, onTraining, onCollection }) {
+export default function WorldMap({ save, onSelectStage, onViewSlime, onTraining, onCollection, onBackToTitle }) {
   const clearedSet = new Set(save.clearedDans);
 
   // ステージのアンロック判定
@@ -17,6 +17,9 @@ export default function WorldMap({ save, onSelectStage, onViewSlime, onTraining,
 
   return (
     <div className="world-map-screen">
+      <button className="back-to-title-btn" onClick={onBackToTitle}>
+        ← タイトル
+      </button>
       <h2 className="screen-title">ワールドマップ</h2>
 
       <div className="stage-list">
