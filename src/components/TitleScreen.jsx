@@ -30,7 +30,6 @@ export default function TitleScreen({ onNewGame, onContinue, onTraining, onSenio
           <circle cx="49" cy="67" r="2.5" fill="#333" />
           <circle cx="73" cy="67" r="2.5" fill="#333" />
           <path d="M 53 78 Q 60 84 67 78" stroke="#333" strokeWidth="2" fill="none" strokeLinecap="round" />
-          <text x="60" y="52" textAnchor="middle" fill="white" fontSize="10" fontWeight="bold" opacity="0.6">?</text>
         </svg>
       </div>
 
