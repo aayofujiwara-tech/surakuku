@@ -1,7 +1,6 @@
-import { useState } from 'react';
 import { loadSave } from '../utils/saveManager';
 
-export default function TrainingSelect({ onSelectDan, onBack }) {
+export default function TrainingSelect({ onSelectDan, onTimeAttack, onBack }) {
   const save = loadSave();
   const trainingRecords = save?.trainingRecords || {};
 
@@ -54,6 +53,23 @@ export default function TrainingSelect({ onSelectDan, onBack }) {
           {trainingRecords[0] && (
             <div className="training-dan-record">
               ベスト: {formatTime(trainingRecords[0].bestTime)} | 全問正解: {trainingRecords[0].perfectCount || 0}回
+            </div>
+          )}
+        </button>
+      </div>
+
+      <div className="training-timeattack">
+        <button
+          className="training-dan-card training-timeattack-card"
+          onClick={onTimeAttack}
+        >
+          <div className="training-dan-number">タイムアタック</div>
+          <div className="training-dan-preview">
+            全81問（1×1 〜 9×9）を最速で！
+          </div>
+          {save?.timeAttackBest && (
+            <div className="training-dan-record">
+              ベスト: {formatTime(save.timeAttackBest)}
             </div>
           )}
         </button>

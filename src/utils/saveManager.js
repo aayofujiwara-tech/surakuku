@@ -13,6 +13,7 @@ const DEFAULT_SAVE = {
   milestones: {},        // マイルストーン記録
   stageRecords: {},      // ステージごとの記録
   trainingRecords: {},   // とっくんモードの記録（段ごと）
+  timeAttackBest: null,  // タイムアタック最速記録（ミリ秒）
 };
 
 export function loadSave() {
@@ -94,6 +95,15 @@ export function updateSaveAfterTraining(save, { dan, time, mistakes, perfect }) 
     totalAttempts: (prev?.totalAttempts || 0) + 1,
   };
 
+  saveSave(updated);
+  return updated;
+}
+
+export function updateSaveAfterTimeAttack(save, { time }) {
+  const updated = { ...save };
+  if (!updated.timeAttackBest || time < updated.timeAttackBest) {
+    updated.timeAttackBest = time;
+  }
   saveSave(updated);
   return updated;
 }

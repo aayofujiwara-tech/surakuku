@@ -78,6 +78,12 @@ function gameReducer(state, action) {
     case 'FINISH_TRAINING':
       return { ...state, save: action.save, screen: 'trainingSelect', trainingDan: null };
 
+    case 'START_TIMEATTACK':
+      return { ...state, screen: 'timeAttack' };
+
+    case 'FINISH_TIMEATTACK':
+      return { ...state, save: action.save, screen: 'trainingSelect' };
+
     case 'UPDATE_SAVE':
       return { ...state, save: action.save };
 
@@ -137,6 +143,14 @@ export function useGameState() {
     dispatch({ type: 'FINISH_TRAINING', save });
   }, []);
 
+  const startTimeAttack = useCallback(() => {
+    dispatch({ type: 'START_TIMEATTACK' });
+  }, []);
+
+  const finishTimeAttack = useCallback((save) => {
+    dispatch({ type: 'FINISH_TIMEATTACK', save });
+  }, []);
+
   return {
     state,
     setScreen,
@@ -151,5 +165,7 @@ export function useGameState() {
     openTrainingSelect,
     startTraining,
     finishTraining,
+    startTimeAttack,
+    finishTimeAttack,
   };
 }

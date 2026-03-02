@@ -1019,6 +1019,61 @@
 }
 
 /* ===========================
+   Time Attack Screen
+   =========================== */
+.timeattack-screen {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 1rem;
+  background: linear-gradient(180deg, #FFF3E0, #FFE0B2, #FFCC80);
+  color: var(--text);
+}
+
+.timeattack-countdown {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.timeattack-countdown-number {
+  font-size: 5rem;
+  font-weight: 900;
+  color: var(--primary);
+  margin: 2rem 0;
+  animation: countdownPulse 1s ease infinite;
+}
+
+@keyframes countdownPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.8; }
+}
+
+.timeattack-result-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  background: linear-gradient(180deg, #FFF3E0, #FFE0B2);
+}
+
+.timeattack-progress-fill {
+  background: linear-gradient(90deg, #FF9800, #FFB74D) !important;
+}
+
+.training-timeattack {
+  margin-bottom: 1rem;
+}
+
+.training-timeattack-card {
+  border: 2px solid #FF9800 !important;
+  background: linear-gradient(135deg, #FFF3E0, #FFE0B2) !important;
+}
+
+/* ===========================
    Slime Animations
    =========================== */
 .slime-bounce {

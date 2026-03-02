@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useGameState } from './hooks/useGameState';
-import { loadSave, createNewSave, updateSaveAfterBattle, updateSaveAfterTraining, deleteSave } from './utils/saveManager';
+import { loadSave, createNewSave, updateSaveAfterBattle, updateSaveAfterTraining, updateSaveAfterTimeAttack, deleteSave } from './utils/saveManager';
 import { STAGES } from './data/gameData';
 import TitleScreen from './components/TitleScreen';
 import AttributeSelect from './components/AttributeSelect';
@@ -11,6 +11,7 @@ import ResultScreen from './components/ResultScreen';
 import SlimeStatus from './components/SlimeStatus';
 import TrainingSelect from './components/TrainingSelect';
 import TrainingScreen from './components/TrainingScreen';
+import TimeAttackScreen from './components/TimeAttackScreen';
 import './App.css';
 
 export default function App() {
@@ -27,6 +28,8 @@ export default function App() {
     openTrainingSelect,
     startTraining,
     finishTraining,
+    startTimeAttack,
+    finishTimeAttack,
   } = useGameState();
 
   // 起動時にセーブデータ確認
@@ -89,6 +92,20 @@ export default function App() {
     openTrainingSelect();
   };
 
+  const handleTimeAttackFinish = (result) => {
+    const save = state.save || loadSave();
+    if (save) {
+      const updatedSave = updateSaveAfterTimeAttack(save, result);
+      finishTimeAttack(updatedSave);
+    } else {
+      openTrainingSelect();
+    }
+  };
+
+  const handleTimeAttackBack = () => {
+    openTrainingSelect();
+  };
+
   return (
     <div className="game-container">
       {state.screen === 'title' && (
@@ -141,7 +158,16 @@ export default function App() {
       {state.screen === 'trainingSelect' && (
         <TrainingSelect
           onSelectDan={startTraining}
+          onTimeAttack={startTimeAttack}
           onBack={() => state.save ? returnToMap() : setScreen('title')}
+        />
+      )}
+
+      {state.screen === 'timeAttack' && (
+        <TimeAttackScreen
+          key={`timeattack-${Date.now()}`}
+          onFinish={handleTimeAttackFinish}
+          onBack={handleTimeAttackBack}
         />
       )}
 
