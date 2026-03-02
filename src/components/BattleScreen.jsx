@@ -93,7 +93,7 @@ export default function BattleScreen({ stageId, save, onWin, onLose }) {
     if (!currentQ) return;
 
     if (isCorrect) {
-      const newCombo = comboRef.current + 1;
+      const newCombo = Math.min(comboRef.current + 1, 9);
       setCombo(newCombo);
 
       // ダメージ計算
@@ -133,6 +133,11 @@ export default function BattleScreen({ stageId, save, onWin, onLose }) {
         setShowDamage(null);
         setShowComboEffect(null);
         setSlimeFlash(false);
+
+        // 必殺技後はコンボをリセット
+        if (comboEffect?.effect === 'ultimate') {
+          setCombo(0);
+        }
 
         if (newEnemyHp <= 0) {
           setBattlePhase('won');
