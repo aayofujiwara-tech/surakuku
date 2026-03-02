@@ -12,6 +12,7 @@ import SlimeStatus from './components/SlimeStatus';
 import TrainingSelect from './components/TrainingSelect';
 import TrainingScreen from './components/TrainingScreen';
 import TimeAttackScreen from './components/TimeAttackScreen';
+import CollectionScreen from './components/CollectionScreen';
 import './App.css';
 
 export default function App() {
@@ -30,6 +31,7 @@ export default function App() {
     finishTraining,
     startTimeAttack,
     finishTimeAttack,
+    viewCollection,
   } = useGameState();
 
   // 起動時にセーブデータ確認
@@ -122,6 +124,7 @@ export default function App() {
           onSelectStage={handleSelectStage}
           onViewSlime={viewSlime}
           onTraining={openTrainingSelect}
+          onCollection={viewCollection}
         />
       )}
 
@@ -153,6 +156,10 @@ export default function App() {
 
       {state.screen === 'slimeStatus' && state.save && (
         <SlimeStatus save={state.save} onBack={returnToMap} />
+      )}
+
+      {state.screen === 'collection' && state.save && (
+        <CollectionScreen save={state.save} onBack={returnToMap} />
       )}
 
       {state.screen === 'trainingSelect' && (

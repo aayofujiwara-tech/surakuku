@@ -1019,6 +1019,185 @@
 }
 
 /* ===========================
+   Collection Screen
+   =========================== */
+.collection-screen {
+  padding: 1.5rem 1rem;
+  min-height: 100vh;
+}
+
+.collection-section {
+  margin-bottom: 1.5rem;
+}
+
+.collection-section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.collection-count {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-light);
+  background: #EEE;
+  padding: 0.15rem 0.5rem;
+  border-radius: 10px;
+}
+
+.collection-monster-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.collection-monster-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.8rem;
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.collection-monster-card.undiscovered {
+  opacity: 0.5;
+  background: #F0F0F0;
+}
+
+.collection-monster-sprite {
+  min-width: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.collection-unknown {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #CCC;
+  background: #E8E8E8;
+  border-radius: 50%;
+}
+
+.collection-unknown-small {
+  width: 40px;
+  height: 40px;
+  font-size: 1.2rem;
+}
+
+.collection-monster-info {
+  flex: 1;
+}
+
+.collection-monster-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.collection-monster-desc {
+  font-size: 0.7rem;
+  color: var(--text-light);
+  margin-top: 0.1rem;
+}
+
+.collection-monster-record {
+  font-size: 0.65rem;
+  color: var(--primary);
+  margin-top: 0.2rem;
+  font-weight: 600;
+}
+
+.collection-growth-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.collection-growth-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.8rem;
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.collection-growth-card.locked {
+  opacity: 0.4;
+  background: #F0F0F0;
+}
+
+.collection-growth-sprite {
+  min-width: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.collection-growth-info {
+  flex: 1;
+}
+
+.collection-growth-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.collection-growth-desc {
+  font-size: 0.7rem;
+  color: var(--text-light);
+}
+
+.collection-milestones {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.milestone-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.8rem;
+  background: linear-gradient(135deg, #FFF8E1, #FFF3E0);
+  border-radius: var(--radius);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.milestone-icon {
+  font-size: 1.5rem;
+}
+
+.milestone-info {
+  flex: 1;
+}
+
+.milestone-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.milestone-date {
+  font-size: 0.7rem;
+  color: var(--text-light);
+}
+
+/* ===========================
    Time Attack Screen
    =========================== */
 .timeattack-screen {

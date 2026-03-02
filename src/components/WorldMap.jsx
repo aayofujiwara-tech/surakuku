@@ -1,6 +1,6 @@
 import { STAGES } from '../data/gameData';
 
-export default function WorldMap({ save, onSelectStage, onViewSlime, onTraining }) {
+export default function WorldMap({ save, onSelectStage, onViewSlime, onTraining, onCollection }) {
   const clearedSet = new Set(save.clearedDans);
 
   // ステージのアンロック判定
@@ -48,7 +48,10 @@ export default function WorldMap({ save, onSelectStage, onViewSlime, onTraining 
 
       <div className="map-actions">
         <button className="action-btn" onClick={onViewSlime}>
-          スライムを見る
+          スライム
+        </button>
+        <button className="action-btn" onClick={onCollection}>
+          ずかん
         </button>
         <button className="action-btn" onClick={onTraining}>
           とっくん

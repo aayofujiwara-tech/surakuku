@@ -69,6 +69,9 @@ function gameReducer(state, action) {
     case 'VIEW_SLIME':
       return { ...state, screen: 'slimeStatus' };
 
+    case 'VIEW_COLLECTION':
+      return { ...state, screen: 'collection' };
+
     case 'OPEN_TRAINING_SELECT':
       return { ...state, screen: 'trainingSelect' };
 
@@ -127,6 +130,10 @@ export function useGameState() {
     dispatch({ type: 'VIEW_SLIME' });
   }, []);
 
+  const viewCollection = useCallback(() => {
+    dispatch({ type: 'VIEW_COLLECTION' });
+  }, []);
+
   const updateSave = useCallback((save) => {
     dispatch({ type: 'UPDATE_SAVE', save });
   }, []);
@@ -161,6 +168,7 @@ export function useGameState() {
     battleLost,
     returnToMap,
     viewSlime,
+    viewCollection,
     updateSave,
     openTrainingSelect,
     startTraining,
