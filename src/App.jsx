@@ -84,22 +84,14 @@ export default function App() {
     }
   };
 
-  const handleTrainingBack = () => {
-    openTrainingSelect();
-  };
-
   const handleTimeAttackFinish = (result) => {
     const save = state.save || loadSave();
     if (save) {
       const updatedSave = updateSaveAfterTimeAttack(save, result);
       finishTimeAttack(updatedSave);
     } else {
-      openTrainingSelect();
+      backToTitle();
     }
-  };
-
-  const handleTimeAttackBack = () => {
-    openTrainingSelect();
   };
 
   return (
@@ -119,7 +111,7 @@ export default function App() {
           onViewSlime={viewSlime}
           onTraining={openTrainingSelect}
           onCollection={viewCollection}
-          onBackToTitle={backToTitle}
+          onBack={backToTitle}
         />
       )}
 
@@ -146,24 +138,22 @@ export default function App() {
           battleResult={state.battleResult}
           onRetry={handleRetry}
           onReturn={returnToMap}
-          onBackToTitle={backToTitle}
         />
       )}
 
       {state.screen === 'slimeStatus' && state.save && (
-        <SlimeStatus save={state.save} onBack={returnToMap} onBackToTitle={backToTitle} />
+        <SlimeStatus save={state.save} onBack={backToTitle} />
       )}
 
       {state.screen === 'collection' && state.save && (
-        <CollectionScreen save={state.save} onBack={returnToMap} onBackToTitle={backToTitle} />
+        <CollectionScreen save={state.save} onBack={backToTitle} />
       )}
 
       {state.screen === 'trainingSelect' && (
         <TrainingSelect
           onSelectDan={startTraining}
           onTimeAttack={startTimeAttack}
-          onBack={() => state.save ? returnToMap() : backToTitle()}
-          onBackToTitle={backToTitle}
+          onBack={backToTitle}
         />
       )}
 
@@ -171,8 +161,7 @@ export default function App() {
         <TimeAttackScreen
           key={`timeattack-${Date.now()}`}
           onFinish={handleTimeAttackFinish}
-          onBack={handleTimeAttackBack}
-          onBackToTitle={backToTitle}
+          onBack={backToTitle}
         />
       )}
 
@@ -185,8 +174,7 @@ export default function App() {
           key={`training-${state.trainingDan}-${Date.now()}`}
           dan={state.trainingDan}
           onFinish={handleTrainingFinish}
-          onBack={handleTrainingBack}
-          onBackToTitle={backToTitle}
+          onBack={backToTitle}
         />
       )}
     </div>

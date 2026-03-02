@@ -17,7 +17,7 @@ function generateAllQuestions() {
   return questions;
 }
 
-export default function TimeAttackScreen({ onFinish, onBack, onBackToTitle }) {
+export default function TimeAttackScreen({ onFinish, onBack }) {
   const [phase, setPhase] = useState('ready'); // ready, playing, finished
   const [questions] = useState(() => generateAllQuestions());
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -112,9 +112,6 @@ export default function TimeAttackScreen({ onFinish, onBack, onBackToTitle }) {
   if (phase === 'ready') {
     return (
       <div className="timeattack-screen timeattack-countdown">
-        <button className="back-to-title-btn" onClick={onBackToTitle}>
-          ← タイトル
-        </button>
         <h2 className="screen-title">タイムアタック</h2>
         <p className="screen-description">全{TOTAL_QUESTIONS}問（1×1 〜 9×9）</p>
         <div className="timeattack-countdown-number">
@@ -131,9 +128,6 @@ export default function TimeAttackScreen({ onFinish, onBack, onBackToTitle }) {
   if (phase === 'finished') {
     return (
       <div className="timeattack-result-screen">
-        <button className="back-to-title-btn" onClick={onBackToTitle}>
-          ← タイトル
-        </button>
         <h2 className="screen-title">タイムアタック完了！</h2>
 
         <div className="training-result-card">
@@ -168,8 +162,8 @@ export default function TimeAttackScreen({ onFinish, onBack, onBackToTitle }) {
     <div className="timeattack-screen">
       {/* ヘッダー */}
       <div className="training-header">
-        <button className="training-back-btn" onClick={onBackToTitle}>
-          ← タイトル
+        <button className="training-back-btn" onClick={onBack}>
+          ← やめる
         </button>
         <div className="training-info">
           <span className="training-dan-label">タイムアタック</span>

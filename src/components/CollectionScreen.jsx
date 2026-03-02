@@ -3,7 +3,7 @@ import { loadSave } from '../utils/saveManager';
 import SlimeSprite, { getGrowthStage } from './SlimeSprite';
 import EnemySprite from './EnemySprite';
 
-export default function CollectionScreen({ save, onBack, onBackToTitle }) {
+export default function CollectionScreen({ save, onBack }) {
   const clearedSet = new Set(save?.clearedDans || []);
   const attr = ATTRIBUTES.find((a) => a.id === save?.attribute) || ATTRIBUTES[0];
   const currentGrowth = getGrowthStage(save?.clearedDans || []);
@@ -13,9 +13,6 @@ export default function CollectionScreen({ save, onBack, onBackToTitle }) {
 
   return (
     <div className="collection-screen">
-      <button className="back-to-title-btn" onClick={onBackToTitle}>
-        ← タイトル
-      </button>
       <h2 className="screen-title">ずかん</h2>
 
       {/* タブ切り替え風のセクション分け */}

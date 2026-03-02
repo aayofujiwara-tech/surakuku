@@ -1,9 +1,6 @@
-export default function ResultScreen({ battleResult, onRetry, onReturn, onBackToTitle }) {
+export default function ResultScreen({ battleResult, onRetry, onReturn }) {
   return (
     <div className="result-screen">
-      <button className="back-to-title-btn" onClick={onBackToTitle}>
-        ← タイトル
-      </button>
       <h2 className="screen-title">ざんねん...</h2>
       <p className="result-message">もういちどチャレンジしよう！</p>
 
