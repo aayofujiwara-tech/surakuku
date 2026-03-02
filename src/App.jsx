@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useGameState } from './hooks/useGameState';
 import { loadSave, createNewSave, updateSaveAfterBattle, updateSaveAfterTraining, updateSaveAfterTimeAttack, deleteSave } from './utils/saveManager';
 import { STAGES } from './data/gameData';
@@ -35,14 +34,6 @@ export default function App() {
     viewCollection,
     openSeniorMode,
   } = useGameState();
-
-  // 起動時にセーブデータ確認
-  useEffect(() => {
-    const save = loadSave();
-    if (save) {
-      loadSaveAction(save);
-    }
-  }, []);
 
   const handleNewGame = () => {
     deleteSave();
