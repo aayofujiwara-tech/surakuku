@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
-import { STAGES, COMBO_THRESHOLDS, PLAYER_MAX_HP, getDifficulty } from '../data/gameData';
-import { generateStageQuestions, generateChoices } from '../utils/questionGenerator';
+import { STAGES, COMBO_THRESHOLDS, PLAYER_MAX_HP, FINISH_LINE_RATIO, getDifficulty } from '../data/gameData';
+import { generateStageQuestions, generateBossRushQuestion, generateChoices } from '../utils/questionGenerator';
 import SlimeSprite from './SlimeSprite';
 import EnemySprite from './EnemySprite';
 
 export default function BattleScreen({ stageId, save, onWin, onLose }) {
   const stage = STAGES.find((s) => s.id === stageId);
   const difficulty = getDifficulty(stage.dan || 1);
+  const finishLine = Math.floor(stage.hp * FINISH_LINE_RATIO);
 
   const [questions] = useState(() => generateStageQuestions(stage.dan));
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -17,6 +18,11 @@ export default function BattleScreen({ stageId, save, onWin, onLose }) {
   const [inputValue, setInputValue] = useState('');
   const [choices, setChoices] = useState([]);
 
+  // フェーズ管理: 'basic' | 'bossRush'
+  const [stagePhase, setStagePhase] = useState('basic');
+  const [showFinishHint, setShowFinishHint] = useState(false);
+  const [showFinishEffect, setShowFinishEffect] = useState(false);
+
   // 演出状態
   const [showDamage, setShowDamage] = useState(null);
   const [showComboEffect, setShowComboEffect] = useState(null);
@@ -25,9 +31,10 @@ export default function BattleScreen({ stageId, save, onWin, onLose }) {
   const [slimeFlash, setSlimeFlash] = useState(false);
   const [isAnswering, setIsAnswering] = useState(true);
   const [battlePhase, setBattlePhase] = useState('playing');
+  const [enemyDefeated, setEnemyDefeated] = useState(false);
 
   // 統計
-  const [stats, setStats] = useState({ maxCombo: 0, totalDamage: 0, skillCount: 0 });
+  const [stats, setStats] = useState({ maxCombo: 0, totalDamage: 0, skillCount: 0, missCount: 0 });
 
   // Refs to access latest values in callbacks without stale closures
   const comboRef = useRef(combo);
@@ -39,6 +46,8 @@ export default function BattleScreen({ stageId, save, onWin, onLose }) {
   const timerRef = useRef(null);
   const inputRef = useRef(null);
   const isAnsweringRef = useRef(isAnswering);
+  const stagePhaseRef = useRef(stagePhase);
+  const lastBRef = useRef(null);
 
   comboRef.current = combo;
   enemyHpRef.current = enemyHp;
@@ -47,6 +56,7 @@ export default function BattleScreen({ stageId, save, onWin, onLose }) {
   currentIndexRef.current = currentIndex;
   questionsRef.current = questions;
   isAnsweringRef.current = isAnswering;
+  stagePhaseRef.current = stagePhase;
 
   const currentQuestion = questions[currentIndex];
 
@@ -67,18 +77,20 @@ export default function BattleScreen({ stageId, save, onWin, onLose }) {
   const advanceQuestion = () => {
     const idx = currentIndexRef.current;
     const qs = questionsRef.current;
-    if (idx + 1 < qs.length) {
+    const phase = stagePhaseRef.current;
+
+    if (phase === 'basic' && idx + 1 < qs.length) {
+      // フェーズ1: 基礎問題を進める
       setCurrentIndex(idx + 1);
     } else {
-      // 全問終了 → 敵HP残りあり = 追加問題
-      const baseDan = qs[0].a || Math.floor(Math.random() * 9) + 1;
-      const b = Math.floor(Math.random() * 9) + 1;
-      qs.push({
-        a: baseDan,
-        b,
-        answer: baseDan * b,
-        phase: 'advanced',
-      });
+      // フェーズ1終了 or ボスラッシュ中 → ボスラッシュの次の問題
+      if (phase === 'basic') {
+        setStagePhase('bossRush');
+      }
+      const lastQ = qs[idx];
+      lastBRef.current = lastQ?.b;
+      const newQ = generateBossRushQuestion(stage.dan, lastBRef.current);
+      qs.push(newQ);
       setCurrentIndex(idx + 1);
     }
     setInputValue('');
@@ -99,6 +111,7 @@ export default function BattleScreen({ stageId, save, onWin, onLose }) {
       // ダメージ計算
       let damage = currentQ.answer;
       let comboEffect = null;
+      let isFinishBlow = false;
 
       // コンボ閾値チェック（大きい方から）
       for (let i = COMBO_THRESHOLDS.length - 1; i >= 0; i--) {
@@ -108,12 +121,28 @@ export default function BattleScreen({ stageId, save, onWin, onLose }) {
           comboEffect = threshold;
           if (threshold.effect === 'ultimate') {
             setStats((prev) => ({ ...prev, skillCount: prev.skillCount + 1 }));
+            isFinishBlow = true;
           }
           break;
         }
       }
 
-      const newEnemyHp = Math.max(0, enemyHpRef.current - damage);
+      // HP計算: ボスラッシュ中はフィニッシュラインで止める（必殺技以外）
+      let newEnemyHp;
+      if (isFinishBlow) {
+        // 必殺技 → 確殺
+        newEnemyHp = 0;
+      } else if (stagePhaseRef.current === 'bossRush') {
+        // ボスラッシュ中: フィニッシュラインより下にしない
+        newEnemyHp = Math.max(finishLine, enemyHpRef.current - damage);
+        if (newEnemyHp <= finishLine) {
+          setShowFinishHint(true);
+        }
+      } else {
+        // フェーズ1: 通常通りダメージ
+        newEnemyHp = Math.max(0, enemyHpRef.current - damage);
+      }
+
       setEnemyHp(newEnemyHp);
       setEnemyDamaged(true);
       setShowDamage({ value: damage, isCombo: !!comboEffect });
@@ -128,6 +157,8 @@ export default function BattleScreen({ stageId, save, onWin, onLose }) {
         totalDamage: prev.totalDamage + damage,
       }));
 
+      const animDuration = isFinishBlow ? 2000 : comboEffect ? 1500 : 800;
+
       setTimeout(() => {
         setEnemyDamaged(false);
         setShowDamage(null);
@@ -139,37 +170,53 @@ export default function BattleScreen({ stageId, save, onWin, onLose }) {
           setCombo(0);
         }
 
-        if (newEnemyHp <= 0) {
-          setBattlePhase('won');
-          const s = statsRef.current;
-          onWin({
-            maxCombo: Math.max(s.maxCombo, newCombo),
-            totalDamage: s.totalDamage + damage,
-            skillCount: s.skillCount + (comboEffect?.effect === 'ultimate' ? 1 : 0),
-          });
+        if (isFinishBlow) {
+          // 必殺技フィニッシュ → 勝利演出
+          setEnemyDefeated(true);
+          setTimeout(() => {
+            setBattlePhase('won');
+            const s = statsRef.current;
+            onWin({
+              maxCombo: Math.max(s.maxCombo, newCombo),
+              totalDamage: s.totalDamage + damage,
+              skillCount: s.skillCount + 1,
+            });
+          }, 1200);
         } else {
           advanceQuestion();
         }
-      }, comboEffect ? 1500 : 800);
+      }, animDuration);
     } else {
       // 不正解
       setCombo(0);
-      const dmg = difficulty.enemyDamage;
-      const newPlayerHp = Math.max(0, playerHpRef.current - dmg);
-      setPlayerHp(newPlayerHp);
-      setPlayerDamaged(true);
+      setStats((prev) => ({ ...prev, missCount: prev.missCount + 1 }));
 
-      setTimeout(() => {
-        setPlayerDamaged(false);
-
-        if (newPlayerHp <= 0) {
-          setBattlePhase('lost');
-          const s = statsRef.current;
-          onLose({ maxCombo: s.maxCombo, totalDamage: s.totalDamage, skillCount: s.skillCount });
-        } else {
+      if (stagePhaseRef.current === 'bossRush') {
+        // ボスラッシュ中: ダメージなし、コンボリセットのみ
+        setPlayerDamaged(true);
+        setTimeout(() => {
+          setPlayerDamaged(false);
           advanceQuestion();
-        }
-      }, 800);
+        }, 800);
+      } else {
+        // フェーズ1: 通常のダメージ処理
+        const dmg = difficulty.enemyDamage;
+        const newPlayerHp = Math.max(0, playerHpRef.current - dmg);
+        setPlayerHp(newPlayerHp);
+        setPlayerDamaged(true);
+
+        setTimeout(() => {
+          setPlayerDamaged(false);
+
+          if (newPlayerHp <= 0) {
+            setBattlePhase('lost');
+            const s = statsRef.current;
+            onLose({ maxCombo: s.maxCombo, totalDamage: s.totalDamage, skillCount: s.skillCount });
+          } else {
+            advanceQuestion();
+          }
+        }, 800);
+      }
     }
   };
 
@@ -178,7 +225,7 @@ export default function BattleScreen({ stageId, save, onWin, onLose }) {
     if (battlePhase !== 'playing' || !isAnswering) return;
 
     const q = questions[currentIndex];
-    const limit = q?.phase === 'boss' ? difficulty.bossTimeLimit : difficulty.timeLimit;
+    const limit = stagePhase === 'bossRush' ? difficulty.bossTimeLimit : difficulty.timeLimit;
     setTimeLeft(limit);
 
     timerRef.current = setInterval(() => {
@@ -210,24 +257,37 @@ export default function BattleScreen({ stageId, save, onWin, onLose }) {
   if (!currentQuestion) return null;
 
   const comboStars = Array.from({ length: 9 }, (_, i) => i < combo);
-  const timeLimit = currentQuestion.phase === 'boss' ? difficulty.bossTimeLimit : difficulty.timeLimit;
+  const timeLimit = stagePhase === 'bossRush' ? difficulty.bossTimeLimit : difficulty.timeLimit;
   const timePercent = (timeLeft / timeLimit) * 100;
-  const phaseLabel = currentQuestion.phase === 'basic' ? 'きほん' : currentQuestion.phase === 'advanced' ? 'おうよう' : 'ボスラッシュ';
+  const hpAtFinishLine = enemyHp <= finishLine && stagePhase === 'bossRush';
+
+  // フェーズラベル
+  let phaseLabel;
+  if (stagePhase === 'basic') {
+    phaseLabel = `きほん ${currentIndex + 1}/9`;
+  } else {
+    phaseLabel = 'ボスラッシュ！';
+  }
 
   return (
     <div className="battle-screen">
       {/* フェーズ表示 */}
-      <div className="battle-phase-label">{phaseLabel}</div>
+      <div className={`battle-phase-label ${stagePhase === 'bossRush' ? 'phase-boss-rush' : ''}`}>
+        {phaseLabel}
+      </div>
 
       {/* 敵エリア */}
       <div className="battle-enemy-area">
         <div className="enemy-name">{stage.enemyName}</div>
-        <div className="hp-bar enemy-hp-bar">
+        <div className={`hp-bar enemy-hp-bar ${hpAtFinishLine ? 'hp-bar-critical' : ''}`}>
           <div className="hp-bar-fill" style={{ width: `${(enemyHp / stage.hp) * 100}%` }} />
+          {/* フィニッシュラインマーカー */}
+          <div className="finish-line-marker" style={{ left: `${FINISH_LINE_RATIO * 100}%` }} />
           <span className="hp-text">{enemyHp} / {stage.hp}</span>
         </div>
         <div className="enemy-sprite-container">
           <EnemySprite stage={stage} size={100} damaged={enemyDamaged} />
+          {enemyDefeated && <div className="enemy-defeated-effect" />}
           {showDamage && (
             <div className={`damage-popup ${showDamage.isCombo ? 'combo-damage' : ''}`}>
               {showDamage.value}
@@ -241,6 +301,11 @@ export default function BattleScreen({ stageId, save, onWin, onLose }) {
         <div className={`combo-effect combo-effect-${showComboEffect.effect}`}>
           {showComboEffect.label}！
         </div>
+      )}
+
+      {/* フィニッシュヒント */}
+      {showFinishHint && stagePhase === 'bossRush' && !showComboEffect && !enemyDefeated && (
+        <div className="finish-hint">ひっさつわざで とどめだ！</div>
       )}
 
       {/* スライムエリア */}
@@ -258,7 +323,7 @@ export default function BattleScreen({ stageId, save, onWin, onLose }) {
       </div>
 
       {/* コンボ */}
-      <div className="combo-bar">
+      <div className={`combo-bar ${stagePhase === 'bossRush' ? 'combo-bar-boss-rush' : ''}`}>
         <span className="combo-label">コンボ</span>
         <div className="combo-stars">
           {comboStars.map((filled, i) => (

@@ -5,7 +5,7 @@ export const STAGES = [
     dan: 1,
     enemyName: 'イチモク',
     enemyDescription: '一つ目の小さな不定形',
-    hp: 50,
+    hp: 100,
     emoji: '👁️',
   },
   {
@@ -13,7 +13,7 @@ export const STAGES = [
     dan: 2,
     enemyName: 'ニブンカ',
     enemyDescription: '2つに分裂する',
-    hp: 80,
+    hp: 150,
     emoji: '🫧',
   },
   {
@@ -21,7 +21,7 @@ export const STAGES = [
     dan: 3,
     enemyName: 'サンカク',
     enemyDescription: '三角形のトゲトゲ',
-    hp: 120,
+    hp: 200,
     emoji: '🔺',
   },
   {
@@ -29,7 +29,7 @@ export const STAGES = [
     dan: 4,
     enemyName: 'シカクイ',
     enemyDescription: '四角い壁モンスター',
-    hp: 170,
+    hp: 260,
     emoji: '🟧',
   },
   {
@@ -37,7 +37,7 @@ export const STAGES = [
     dan: 5,
     enemyName: 'ゴボウシ',
     enemyDescription: '星型の中ボス',
-    hp: 230,
+    hp: 330,
     emoji: '⭐',
   },
   {
@@ -45,7 +45,7 @@ export const STAGES = [
     dan: 6,
     enemyName: 'ロクロク',
     enemyDescription: '六角形の回転体',
-    hp: 300,
+    hp: 400,
     emoji: '🔷',
   },
   {
@@ -53,7 +53,7 @@ export const STAGES = [
     dan: 7,
     enemyName: 'ナナイロ',
     enemyDescription: '虹色に変化する',
-    hp: 380,
+    hp: 480,
     emoji: '🌈',
   },
   {
@@ -61,7 +61,7 @@ export const STAGES = [
     dan: 8,
     enemyName: 'ハチマキ',
     enemyDescription: '8本腕のタコ型',
-    hp: 470,
+    hp: 560,
     emoji: '🐙',
   },
   {
@@ -69,7 +69,7 @@ export const STAGES = [
     dan: 9,
     enemyName: 'キュウキョク',
     enemyDescription: '9つの顔を持つ',
-    hp: 570,
+    hp: 560,
     emoji: '🎭',
   },
   {
@@ -77,7 +77,7 @@ export const STAGES = [
     dan: 0, // 全段ミックス
     enemyName: 'ムゲン',
     enemyDescription: '無限に形が変わる',
-    hp: 999,
+    hp: 800,
     emoji: '♾️',
   },
 ];
@@ -178,3 +178,6 @@ export function getDifficulty(dan) {
 
 // プレイヤーHP
 export const PLAYER_MAX_HP = 100;
+
+// フィニッシュライン（敵HPの何%以下で必殺技待ちに入るか）
+export const FINISH_LINE_RATIO = 0.2;

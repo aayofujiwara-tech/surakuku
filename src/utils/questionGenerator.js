@@ -2,29 +2,26 @@
  * 九九の問題を生成するユーティリティ
  */
 
-// ステージの出題構成を生成
-// 前半（基礎）: ×1 → ×2 → ... → ×9（順番に9問）
-// 後半（応用）: ランダム5問
-// ボスラッシュ: ランダム3問
+// フェーズ1（基礎）の問題を生成: ×1 → ×9 の順番で9問
 export function generateStageQuestions(dan) {
   const questions = [];
 
   // 全段ミックス（最終ボス）
   if (dan === 0) {
-    for (let i = 0; i < 17; i++) {
+    for (let i = 0; i < 9; i++) {
       const randomDan = Math.floor(Math.random() * 9) + 1;
       const randomMultiplier = Math.floor(Math.random() * 9) + 1;
       questions.push({
         a: randomDan,
         b: randomMultiplier,
         answer: randomDan * randomMultiplier,
-        phase: i < 9 ? 'basic' : i < 14 ? 'advanced' : 'boss',
+        phase: 'basic',
       });
     }
     return questions;
   }
 
-  // 前半（基礎）: 順番に9問
+  // 基礎: 順番に9問
   for (let i = 1; i <= 9; i++) {
     questions.push({
       a: dan,
@@ -34,29 +31,26 @@ export function generateStageQuestions(dan) {
     });
   }
 
-  // 後半（応用）: ランダム5問
-  for (let i = 0; i < 5; i++) {
-    const b = Math.floor(Math.random() * 9) + 1;
-    questions.push({
-      a: dan,
-      b,
-      answer: dan * b,
-      phase: 'advanced',
-    });
-  }
-
-  // ボスラッシュ: ランダム3問
-  for (let i = 0; i < 3; i++) {
-    const b = Math.floor(Math.random() * 9) + 1;
-    questions.push({
-      a: dan,
-      b,
-      answer: dan * b,
-      phase: 'boss',
-    });
-  }
-
   return questions;
+}
+
+// ボスラッシュ用のランダム問題を1問生成（前回と被らないようにする）
+export function generateBossRushQuestion(dan, lastB) {
+  if (dan === 0) {
+    // 全段ミックス
+    let a, b;
+    do {
+      a = Math.floor(Math.random() * 9) + 1;
+      b = Math.floor(Math.random() * 9) + 1;
+    } while (b === lastB && a === dan);
+    return { a, b, answer: a * b, phase: 'bossRush' };
+  }
+
+  let b;
+  do {
+    b = Math.floor(Math.random() * 9) + 1;
+  } while (b === lastB);
+  return { a: dan, b, answer: dan * b, phase: 'bossRush' };
 }
 
 // 配列をシャッフル（Fisher-Yates）
