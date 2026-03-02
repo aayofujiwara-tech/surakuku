@@ -1686,15 +1686,13 @@
   padding: 0.8rem;
 }
 
-/* Title Screen Senior Mode Button */
-.senior-mode-btn {
-  background: linear-gradient(135deg, #FFF8E1, #FFE0B2) !important;
-  color: #E65100 !important;
-  border: 2px solid #FFB74D !important;
-}
-
-.senior-mode-btn:hover {
-  background: linear-gradient(135deg, #FFE0B2, #FFCC80) !important;
+/* Title Screen: disabled button (no save data) */
+.title-btn:disabled {
+  color: #aaa;
+  background: #f0f0f0;
+  border: 2px solid #ddd;
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 /* ===========================

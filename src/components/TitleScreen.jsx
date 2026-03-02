@@ -34,18 +34,29 @@ export default function TitleScreen({ onNewGame, onContinue, onTraining, onSenio
       </div>
 
       <div className="title-buttons">
-        <button className="title-btn primary-btn" onClick={onNewGame}>
-          はじめから
-        </button>
-        {hasSave && (
-          <button className="title-btn secondary-btn" onClick={onContinue}>
-            つづきから
-          </button>
+        {hasSave ? (
+          <>
+            <button className="title-btn primary-btn" onClick={onContinue}>
+              つづきから
+            </button>
+            <button className="title-btn secondary-btn" onClick={onNewGame}>
+              はじめから
+            </button>
+          </>
+        ) : (
+          <>
+            <button className="title-btn primary-btn" onClick={onNewGame}>
+              はじめから
+            </button>
+            <button className="title-btn secondary-btn" disabled>
+              つづきから
+            </button>
+          </>
         )}
         <button className="title-btn secondary-btn" onClick={onTraining}>
           とっくんモード
         </button>
-        <button className="title-btn senior-mode-btn" onClick={onSeniorMode}>
+        <button className="title-btn secondary-btn" onClick={onSeniorMode}>
           のうトレ
         </button>
       </div>
