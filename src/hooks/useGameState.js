@@ -3,7 +3,7 @@ import { PLAYER_MAX_HP } from '../data/gameData';
 
 const initialState = {
   // 画面遷移
-  screen: 'title', // title, attributeSelect, worldMap, battle, result, growth, slimeStatus, trainingSelect, training
+  screen: 'title', // title, attributeSelect, worldMap, battle, result, growth, slimeStatus, trainingSelect, training, seniorMode
 
   // プレイヤー情報
   save: null,
@@ -87,6 +87,9 @@ function gameReducer(state, action) {
     case 'FINISH_TIMEATTACK':
       return { ...state, save: action.save, screen: 'trainingSelect' };
 
+    case 'OPEN_SENIOR_MODE':
+      return { ...state, screen: 'seniorMode' };
+
     case 'UPDATE_SAVE':
       return { ...state, save: action.save };
 
@@ -158,6 +161,10 @@ export function useGameState() {
     dispatch({ type: 'FINISH_TIMEATTACK', save });
   }, []);
 
+  const openSeniorMode = useCallback(() => {
+    dispatch({ type: 'OPEN_SENIOR_MODE' });
+  }, []);
+
   return {
     state,
     setScreen,
@@ -175,5 +182,6 @@ export function useGameState() {
     finishTraining,
     startTimeAttack,
     finishTimeAttack,
+    openSeniorMode,
   };
 }

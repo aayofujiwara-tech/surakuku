@@ -1,6 +1,6 @@
 import { loadSave } from '../utils/saveManager';
 
-export default function TitleScreen({ onNewGame, onContinue, onTraining }) {
+export default function TitleScreen({ onNewGame, onContinue, onTraining, onSeniorMode }) {
   const hasSave = !!loadSave();
 
   return (
@@ -45,6 +45,9 @@ export default function TitleScreen({ onNewGame, onContinue, onTraining }) {
         )}
         <button className="title-btn secondary-btn" onClick={onTraining}>
           とっくんモード
+        </button>
+        <button className="title-btn senior-mode-btn" onClick={onSeniorMode}>
+          のうトレ
         </button>
       </div>
 

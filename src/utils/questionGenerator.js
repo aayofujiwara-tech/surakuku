@@ -197,3 +197,83 @@ export function generateChoices(dan, n, answer, difficultyLevel) {
 
   return shuffle([answer, ...selected]);
 }
+
+/**
+ * シニアモード用の問題を生成
+ *
+ * @param {'addition'|'subtraction'|'multiplication'} operation - 演算種類
+ * @param {'easy'|'normal'} range - 数の範囲（easy: 1-5, normal: 1-9）
+ * @param {number} count - 問題数
+ * @returns {Array} 問題配列
+ */
+export function generateSeniorQuestions(operation, range, count = 10) {
+  const maxNum = range === 'easy' ? 5 : 9;
+  const questions = [];
+
+  for (let i = 0; i < count; i++) {
+    let a = Math.floor(Math.random() * maxNum) + 1;
+    let b = Math.floor(Math.random() * maxNum) + 1;
+
+    if (operation === 'subtraction') {
+      // 引き算は答えが0以上になるようにaを大きい方にする
+      if (a < b) [a, b] = [b, a];
+    }
+
+    let answer;
+    let symbol;
+    switch (operation) {
+      case 'addition':
+        answer = a + b;
+        symbol = '＋';
+        break;
+      case 'subtraction':
+        answer = a - b;
+        symbol = '−';
+        break;
+      case 'multiplication':
+      default:
+        answer = a * b;
+        symbol = '×';
+        break;
+    }
+
+    questions.push({ a, b, answer, symbol, operation });
+  }
+
+  return questions;
+}
+
+/**
+ * シニアモード用の選択肢を生成（4択）
+ * 正解に近い紛らわしすぎない値を生成
+ *
+ * @param {number} answer - 正解
+ * @param {string} operation - 演算種類
+ * @returns {number[]} シャッフルされた4つの選択肢
+ */
+export function generateSeniorChoices(answer, operation) {
+  const selected = new Set();
+
+  // 正解の近くから候補を生成（±1〜5の範囲）
+  const offsets = operation === 'multiplication'
+    ? [1, -1, 2, -2, 3, -3, 5, -5, 4, -4]
+    : [1, -1, 2, -2, 3, -3];
+
+  for (const offset of offsets) {
+    const v = answer + offset;
+    if (v >= 0 && v !== answer && !selected.has(v)) {
+      selected.add(v);
+      if (selected.size >= 3) break;
+    }
+  }
+
+  // 足りない場合のフォールバック
+  let offset = 1;
+  while (selected.size < 3) {
+    const v = answer + offset;
+    if (v >= 0 && !selected.has(v) && v !== answer) selected.add(v);
+    offset = offset > 0 ? -offset : -offset + 1;
+  }
+
+  return shuffle([answer, ...selected]);
+}

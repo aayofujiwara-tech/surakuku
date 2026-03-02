@@ -13,6 +13,7 @@ import TrainingSelect from './components/TrainingSelect';
 import TrainingScreen from './components/TrainingScreen';
 import TimeAttackScreen from './components/TimeAttackScreen';
 import CollectionScreen from './components/CollectionScreen';
+import SeniorModeScreen from './components/SeniorModeScreen';
 import './App.css';
 
 export default function App() {
@@ -32,6 +33,7 @@ export default function App() {
     startTimeAttack,
     finishTimeAttack,
     viewCollection,
+    openSeniorMode,
   } = useGameState();
 
   // 起動時にセーブデータ確認
@@ -111,7 +113,7 @@ export default function App() {
   return (
     <div className="game-container">
       {state.screen === 'title' && (
-        <TitleScreen onNewGame={handleNewGame} onContinue={handleContinue} onTraining={openTrainingSelect} />
+        <TitleScreen onNewGame={handleNewGame} onContinue={handleContinue} onTraining={openTrainingSelect} onSeniorMode={openSeniorMode} />
       )}
 
       {state.screen === 'attributeSelect' && (
@@ -176,6 +178,10 @@ export default function App() {
           onFinish={handleTimeAttackFinish}
           onBack={handleTimeAttackBack}
         />
+      )}
+
+      {state.screen === 'seniorMode' && (
+        <SeniorModeScreen onBack={() => setScreen('title')} />
       )}
 
       {state.screen === 'training' && state.trainingDan !== null && (
