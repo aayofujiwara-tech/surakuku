@@ -181,3 +181,6 @@ export const PLAYER_MAX_HP = 100;
 
 // フィニッシュライン（敵HPの何%以下で必殺技待ちに入るか）
 export const FINISH_LINE_RATIO = 0.2;
+
+// ボスラッシュ中のコンボ加速倍率
+export const BOSS_RUSH_COMBO_MULTIPLIER = 3;

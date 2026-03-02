@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { STAGES, COMBO_THRESHOLDS, PLAYER_MAX_HP, FINISH_LINE_RATIO, getDifficulty } from '../data/gameData';
+import { STAGES, COMBO_THRESHOLDS, PLAYER_MAX_HP, FINISH_LINE_RATIO, BOSS_RUSH_COMBO_MULTIPLIER, getDifficulty } from '../data/gameData';
 import { generateStageQuestions, generateBossRushQuestion, generateChoices } from '../utils/questionGenerator';
 import SlimeSprite from './SlimeSprite';
 import EnemySprite from './EnemySprite';
@@ -105,7 +105,9 @@ export default function BattleScreen({ stageId, save, onWin, onLose }) {
     if (!currentQ) return;
 
     if (isCorrect) {
-      const newCombo = Math.min(comboRef.current + 1, 9);
+      const prevCombo = comboRef.current;
+      const increment = stagePhaseRef.current === 'bossRush' ? BOSS_RUSH_COMBO_MULTIPLIER : 1;
+      const newCombo = Math.min(prevCombo + increment, 9);
       setCombo(newCombo);
 
       // ダメージ計算
@@ -113,10 +115,10 @@ export default function BattleScreen({ stageId, save, onWin, onLose }) {
       let comboEffect = null;
       let isFinishBlow = false;
 
-      // コンボ閾値チェック（大きい方から）
+      // コンボ閾値チェック（大きい方から）— このステップで超えた最大の閾値を適用
       for (let i = COMBO_THRESHOLDS.length - 1; i >= 0; i--) {
         const threshold = COMBO_THRESHOLDS[i];
-        if (newCombo >= threshold.combo && newCombo % threshold.combo === 0) {
+        if (prevCombo < threshold.combo && newCombo >= threshold.combo) {
           damage = threshold.multiplier * currentQ.answer;
           comboEffect = threshold;
           if (threshold.effect === 'ultimate') {
