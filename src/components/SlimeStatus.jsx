@@ -1,10 +1,13 @@
 import { ATTRIBUTES, GROWTH_STAGES } from '../data/gameData';
+import { getEarnedTitles, getTitleProgress, TITLES } from '../data/titles';
 import SlimeSprite, { getGrowthStage } from './SlimeSprite';
 
 export default function SlimeStatus({ save, onBack }) {
   const attr = ATTRIBUTES.find((a) => a.id === save.attribute);
   const stage = getGrowthStage(save.clearedDans);
   const growthInfo = GROWTH_STAGES.find((g) => g.stage === stage) || GROWTH_STAGES[0];
+  const earnedTitles = getEarnedTitles(save);
+  const { earned, total } = getTitleProgress(save);
 
   return (
     <div className="slime-status-screen">
@@ -51,6 +54,34 @@ export default function SlimeStatus({ save, onBack }) {
         <div className="stat-row">
           <span className="stat-label">総ダメージ</span>
           <span className="stat-value">{save.totalDamage.toLocaleString()}</span>
+        </div>
+      </div>
+
+      {/* 称号セクション */}
+      <div className="titles-section">
+        <div className="titles-header">
+          <span className="titles-label">しょうごう</span>
+          <span className="titles-progress">{earned} / {total}</span>
+        </div>
+        <div className="titles-grid">
+          {TITLES.map((title) => {
+            const isEarned = earnedTitles.some((t) => t.id === title.id);
+            return (
+              <div
+                key={title.id}
+                className={`title-badge ${isEarned ? 'earned' : 'locked'}`}
+                title={isEarned ? `${title.name}: ${title.description}` : '???'}
+              >
+                <span
+                  className="title-icon"
+                  dangerouslySetInnerHTML={{ __html: isEarned ? title.icon : '&#x1F512;' }}
+                />
+                <span className="title-name">
+                  {isEarned ? title.name : '???'}
+                </span>
+              </div>
+            );
+          })}
         </div>
       </div>
 

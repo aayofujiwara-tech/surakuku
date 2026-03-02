@@ -736,6 +736,75 @@
   box-shadow: 0 2px 6px rgba(108, 99, 255, 0.3);
 }
 
+/* Titles Section */
+.titles-section {
+  width: 100%;
+  max-width: 340px;
+  margin: 1rem auto;
+}
+
+.titles-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.titles-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.titles-progress {
+  font-size: 0.75rem;
+  color: var(--text-light);
+  background: #EEE;
+  padding: 0.1rem 0.5rem;
+  border-radius: 10px;
+}
+
+.titles-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem;
+}
+
+.title-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.6rem;
+  background: var(--bg-card);
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.title-badge.locked {
+  opacity: 0.4;
+  background: #F0F0F0;
+}
+
+.title-badge.earned {
+  background: linear-gradient(135deg, #FFF8E1, #FFFDE7);
+  border: 1px solid #FFD54F;
+}
+
+.title-icon {
+  font-size: 1.1rem;
+  min-width: 1.3rem;
+  text-align: center;
+}
+
+.title-name {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* ===========================
    Training Select Screen
    =========================== */
