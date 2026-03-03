@@ -77,7 +77,7 @@ export const STAGES = [
     dan: 0, // 全段ミックス
     enemyName: 'ムゲン',
     enemyDescription: '無限に形が変わる',
-    hp: 350,
+    hp: 550,
     emoji: '♾️',
   },
 ];
