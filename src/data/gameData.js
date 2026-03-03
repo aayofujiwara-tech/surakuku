@@ -29,7 +29,7 @@ export const STAGES = [
     dan: 4,
     enemyName: 'シカクイ',
     enemyDescription: '四角い壁モンスター',
-    hp: 260,
+    hp: 250,
     emoji: '🟧',
   },
   {
@@ -37,7 +37,7 @@ export const STAGES = [
     dan: 5,
     enemyName: 'ゴボウシ',
     enemyDescription: '星型の中ボス',
-    hp: 330,
+    hp: 300,
     emoji: '⭐',
   },
   {
@@ -45,7 +45,7 @@ export const STAGES = [
     dan: 6,
     enemyName: 'ロクロク',
     enemyDescription: '六角形の回転体',
-    hp: 400,
+    hp: 350,
     emoji: '🔷',
   },
   {
@@ -53,7 +53,7 @@ export const STAGES = [
     dan: 7,
     enemyName: 'ナナイロ',
     enemyDescription: '虹色に変化する',
-    hp: 480,
+    hp: 400,
     emoji: '🌈',
   },
   {
@@ -61,7 +61,7 @@ export const STAGES = [
     dan: 8,
     enemyName: 'ハチマキ',
     enemyDescription: '8本腕のタコ型',
-    hp: 560,
+    hp: 450,
     emoji: '🐙',
   },
   {
@@ -69,7 +69,7 @@ export const STAGES = [
     dan: 9,
     enemyName: 'キュウキョク',
     enemyDescription: '9つの顔を持つ',
-    hp: 560,
+    hp: 450,
     emoji: '🎭',
   },
   {
@@ -77,7 +77,7 @@ export const STAGES = [
     dan: 0, // 全段ミックス
     enemyName: 'ムゲン',
     enemyDescription: '無限に形が変わる',
-    hp: 800,
+    hp: 350,
     emoji: '♾️',
   },
 ];
@@ -180,7 +180,7 @@ export function getDifficulty(dan) {
 export const PLAYER_MAX_HP = 100;
 
 // フィニッシュライン（敵HPの何%以下で必殺技待ちに入るか）
-export const FINISH_LINE_RATIO = 0.2;
+export const FINISH_LINE_RATIO = 0.1;
 
 // ボスラッシュ中のコンボ加速倍率
 export const BOSS_RUSH_COMBO_MULTIPLIER = 3;
