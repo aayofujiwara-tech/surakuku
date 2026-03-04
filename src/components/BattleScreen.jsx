@@ -15,7 +15,6 @@ export default function BattleScreen({ stageId, save, onWin, onLose, onQuit, set
   const [playerHp, setPlayerHp] = useState(PLAYER_MAX_HP);
   const [combo, setCombo] = useState(0);
   const [timeLeft, setTimeLeft] = useState(difficulty.timeLimit);
-  const [inputValue, setInputValue] = useState('');
   const [choices, setChoices] = useState([]);
 
   // フェーズ管理: 'basic' | 'bossRush'
@@ -45,7 +44,6 @@ export default function BattleScreen({ stageId, save, onWin, onLose, onQuit, set
   const currentIndexRef = useRef(currentIndex);
   const questionsRef = useRef(questions);
   const timerRef = useRef(null);
-  const inputRef = useRef(null);
   const isAnsweringRef = useRef(isAnswering);
   const stagePhaseRef = useRef(stagePhase);
   const lastBRef = useRef(null);
@@ -64,17 +62,10 @@ export default function BattleScreen({ stageId, save, onWin, onLose, onQuit, set
 
   // 4択の選択肢を生成
   useEffect(() => {
-    if (currentQuestion && difficulty.answerMode === 'choice') {
+    if (currentQuestion) {
       setChoices(generateChoices(currentQuestion.a, currentQuestion.b, currentQuestion.answer, difficulty.level));
     }
   }, [currentIndex]);
-
-  // 数値入力モードのフォーカス
-  useEffect(() => {
-    if (difficulty.answerMode === 'input' && inputRef.current && isAnswering) {
-      inputRef.current.focus();
-    }
-  }, [currentIndex, isAnswering]);
 
   const advanceQuestion = () => {
     const idx = currentIndexRef.current;
@@ -95,7 +86,6 @@ export default function BattleScreen({ stageId, save, onWin, onLose, onQuit, set
       qs.push(newQ);
       setCurrentIndex(idx + 1);
     }
-    setInputValue('');
     setIsAnswering(true);
   };
 
@@ -276,12 +266,6 @@ export default function BattleScreen({ stageId, save, onWin, onLose, onQuit, set
     processAnswer(value === currentQuestion.answer);
   };
 
-  const handleInputSubmit = (e) => {
-    e.preventDefault();
-    if (!isAnsweringRef.current || !inputValue) return;
-    processAnswer(parseInt(inputValue, 10) === currentQuestion.answer);
-  };
-
   if (!currentQuestion) return null;
 
   const comboStars = Array.from({ length: 9 }, (_, i) => i < combo);
@@ -375,37 +359,19 @@ export default function BattleScreen({ stageId, save, onWin, onLose, onQuit, set
         </div>
       </div>
 
-      {/* 回答 */}
-      {difficulty.answerMode === 'choice' ? (
-        <div className="choices-grid">
-          {choices.map((choice, i) => (
-            <button
-              key={`${currentIndex}-${i}`}
-              className="choice-button"
-              onClick={() => handleChoiceClick(choice)}
-              disabled={!isAnswering}
-            >
-              {choice}
-            </button>
-          ))}
-        </div>
-      ) : (
-        <form className="input-area" onSubmit={handleInputSubmit}>
-          <input
-            ref={inputRef}
-            type="number"
-            className="answer-input"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
+      {/* 回答（4択） */}
+      <div className="choices-grid">
+        {choices.map((choice, i) => (
+          <button
+            key={`${currentIndex}-${i}`}
+            className="choice-button"
+            onClick={() => handleChoiceClick(choice)}
             disabled={!isAnswering}
-            placeholder="こたえを入力"
-            autoComplete="off"
-          />
-          <button type="submit" className="submit-button" disabled={!isAnswering || !inputValue}>
-            こたえる！
+          >
+            {choice}
           </button>
-        </form>
-      )}
+        ))}
+      </div>
 
       {/* タイマー */}
       <div className="timer-bar">

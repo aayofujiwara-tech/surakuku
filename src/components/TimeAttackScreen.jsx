@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
+import { getDifficulty } from '../data/gameData';
+import { generateChoices } from '../utils/questionGenerator';
 
 const TOTAL_QUESTIONS = 81;
 
@@ -21,7 +23,7 @@ export default function TimeAttackScreen({ onFinish, onBack }) {
   const [phase, setPhase] = useState('ready'); // ready, playing, finished
   const [questions] = useState(() => generateAllQuestions());
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [inputValue, setInputValue] = useState('');
+  const [choices, setChoices] = useState([]);
   const [mistakes, setMistakes] = useState(0);
   const [startTime, setStartTime] = useState(null);
   const [elapsed, setElapsed] = useState(0);
@@ -29,7 +31,6 @@ export default function TimeAttackScreen({ onFinish, onBack }) {
   const [countdown, setCountdown] = useState(3);
   const [isAnswering, setIsAnswering] = useState(false);
 
-  const inputRef = useRef(null);
   const elapsedRef = useRef(null);
 
   const currentQuestion = questions[currentIndex];
@@ -56,12 +57,13 @@ export default function TimeAttackScreen({ onFinish, onBack }) {
     return () => clearInterval(elapsedRef.current);
   }, [phase, startTime]);
 
-  // フォーカス
+  // 選択肢生成
   useEffect(() => {
-    if (phase === 'playing' && inputRef.current && isAnswering) {
-      inputRef.current.focus();
+    if (phase === 'playing' && currentQuestion) {
+      const diff = getDifficulty(currentQuestion.a);
+      setChoices(generateChoices(currentQuestion.a, currentQuestion.b, currentQuestion.answer, diff.level));
     }
-  }, [currentIndex, isAnswering, phase]);
+  }, [currentIndex, phase]);
 
   const processAnswer = (isCorrect) => {
     setIsAnswering(false);
@@ -78,7 +80,6 @@ export default function TimeAttackScreen({ onFinish, onBack }) {
           onFinish({ time: finalTime, mistakes });
         } else {
           setCurrentIndex((prev) => prev + 1);
-          setInputValue('');
           setIsAnswering(true);
         }
       }, 200);
@@ -87,16 +88,14 @@ export default function TimeAttackScreen({ onFinish, onBack }) {
       setFeedback('wrong');
       setTimeout(() => {
         setFeedback(null);
-        setInputValue('');
         setIsAnswering(true);
       }, 400);
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!isAnswering || !inputValue) return;
-    processAnswer(parseInt(inputValue, 10) === currentQuestion.answer);
+  const handleChoiceClick = (value) => {
+    if (!isAnswering) return;
+    processAnswer(value === currentQuestion.answer);
   };
 
   const formatTime = (ms) => {
@@ -191,22 +190,19 @@ export default function TimeAttackScreen({ onFinish, onBack }) {
         </div>
       </div>
 
-      {/* 数値入力（タイムアタックは常に直接入力） */}
-      <form className="input-area training-input-area" onSubmit={handleSubmit}>
-        <input
-          ref={inputRef}
-          type="number"
-          className="answer-input training-answer-input"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          disabled={!isAnswering}
-          placeholder="こたえ"
-          autoComplete="off"
-        />
-        <button type="submit" className="submit-button" disabled={!isAnswering || !inputValue}>
-          OK
-        </button>
-      </form>
+      {/* 回答（4択） */}
+      <div className="choices-grid training-choices">
+        {choices.map((choice, i) => (
+          <button
+            key={`${currentIndex}-${i}`}
+            className="choice-button training-choice-btn"
+            onClick={() => handleChoiceClick(choice)}
+            disabled={!isAnswering}
+          >
+            {choice}
+          </button>
+        ))}
+      </div>
 
       {mistakes > 0 && (
         <div className="training-mistakes">

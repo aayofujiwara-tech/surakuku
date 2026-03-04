@@ -35,7 +35,6 @@ export default function TrainingScreen({ dan, onFinish, onBack }) {
 
   const [questions] = useState(() => generateTrainingQuestions(dan));
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [inputValue, setInputValue] = useState('');
   const [choices, setChoices] = useState([]);
   const [mistakes, setMistakes] = useState(0);
   const [startTime] = useState(() => Date.now());
@@ -44,7 +43,6 @@ export default function TrainingScreen({ dan, onFinish, onBack }) {
   const [feedback, setFeedback] = useState(null); // 'correct' | 'wrong' | null
   const [phase, setPhase] = useState('playing'); // playing | finished
 
-  const inputRef = useRef(null);
   const elapsedTimerRef = useRef(null);
 
   const currentQuestion = questions[currentIndex];
@@ -60,17 +58,10 @@ export default function TrainingScreen({ dan, onFinish, onBack }) {
 
   // 選択肢生成
   useEffect(() => {
-    if (currentQuestion && difficulty.answerMode === 'choice') {
+    if (currentQuestion) {
       setChoices(generateChoices(currentQuestion.a, currentQuestion.b, currentQuestion.answer, difficulty.level));
     }
   }, [currentIndex]);
-
-  // 入力フォーカス
-  useEffect(() => {
-    if (difficulty.answerMode === 'input' && inputRef.current && isAnswering) {
-      inputRef.current.focus();
-    }
-  }, [currentIndex, isAnswering]);
 
   const processAnswer = (isCorrect) => {
     setIsAnswering(false);
@@ -93,7 +84,6 @@ export default function TrainingScreen({ dan, onFinish, onBack }) {
           });
         } else {
           setCurrentIndex((prev) => prev + 1);
-          setInputValue('');
           setIsAnswering(true);
         }
       }, 400);
@@ -102,7 +92,6 @@ export default function TrainingScreen({ dan, onFinish, onBack }) {
       setFeedback('wrong');
       setTimeout(() => {
         setFeedback(null);
-        setInputValue('');
         setIsAnswering(true);
       }, 600);
     }
@@ -111,12 +100,6 @@ export default function TrainingScreen({ dan, onFinish, onBack }) {
   const handleChoiceClick = (value) => {
     if (!isAnswering) return;
     processAnswer(value === currentQuestion.answer);
-  };
-
-  const handleInputSubmit = (e) => {
-    e.preventDefault();
-    if (!isAnswering || !inputValue) return;
-    processAnswer(parseInt(inputValue, 10) === currentQuestion.answer);
   };
 
   const formatTime = (ms) => {
@@ -200,37 +183,19 @@ export default function TrainingScreen({ dan, onFinish, onBack }) {
         </div>
       </div>
 
-      {/* 回答 */}
-      {difficulty.answerMode === 'choice' ? (
-        <div className="choices-grid training-choices">
-          {choices.map((choice, i) => (
-            <button
-              key={`${currentIndex}-${i}`}
-              className="choice-button training-choice-btn"
-              onClick={() => handleChoiceClick(choice)}
-              disabled={!isAnswering}
-            >
-              {choice}
-            </button>
-          ))}
-        </div>
-      ) : (
-        <form className="input-area training-input-area" onSubmit={handleInputSubmit}>
-          <input
-            ref={inputRef}
-            type="number"
-            className="answer-input training-answer-input"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
+      {/* 回答（4択） */}
+      <div className="choices-grid training-choices">
+        {choices.map((choice, i) => (
+          <button
+            key={`${currentIndex}-${i}`}
+            className="choice-button training-choice-btn"
+            onClick={() => handleChoiceClick(choice)}
             disabled={!isAnswering}
-            placeholder="こたえを入力"
-            autoComplete="off"
-          />
-          <button type="submit" className="submit-button" disabled={!isAnswering || !inputValue}>
-            こたえる！
+          >
+            {choice}
           </button>
-        </form>
-      )}
+        ))}
+      </div>
 
       {/* ミス表示 */}
       {mistakes > 0 && (

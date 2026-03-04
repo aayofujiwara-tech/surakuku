@@ -155,13 +155,34 @@ export function generateChoices(dan, n, answer, difficultyLevel) {
     return tryAdd(pickRandom(available));
   };
 
-  if (difficultyLevel === 'medium') {
-    // 中難度：A1つ + C1つ（±1〜2の近い値）+ D1つ
+  if (difficultyLevel === 'hard') {
+    // 高難度（7〜9の段、最終ボス）：全ダミーが正解の±10〜15以内
+    // A: 同じ段の隣 × 1
+    pickFromCategory(catA);
+    // C: ±1〜3の近い値 × 1
+    const veryCloseCatC = catC.filter((v) => Math.abs(v - answer) <= 3);
+    pickFromCategory(veryCloseCatC.length > 0 ? veryCloseCatC : catC);
+    // 残り1つ: B（隣の段）or C（±4〜6）or D（同じ一の位で±10以内）
+    const nearB = catB.filter((v) => Math.abs(v - answer) <= 15);
+    const midCatC = [4, -4, 5, -5, 6, -6].map((o) => answer + o).filter((v) => v > 0 && v !== answer);
+    const nearD = catDUnique.filter((v) => Math.abs(v - answer) <= 10);
+    const hardPool = [...nearB, ...midCatC, ...nearD];
+    if (!pickFromCategory(hardPool)) {
+      // ±1〜9から補充
+      const fallbackC = [];
+      for (let o = 1; o <= 9; o++) {
+        if (answer + o > 0) fallbackC.push(answer + o);
+        if (answer - o > 0) fallbackC.push(answer - o);
+      }
+      pickFromCategory(fallbackC);
+    }
+  } else if (difficultyLevel === 'medium') {
+    // 中難度：A1つ + C1つ（±1〜2の近い値）+ B or D 1つ
     pickFromCategory(catA);
     // Cから ±1〜2 のみ
     const closeCatC = catC.filter((v) => Math.abs(v - answer) <= 2);
     pickFromCategory(closeCatC.length > 0 ? closeCatC : catC);
-    pickFromCategory(catDUnique);
+    pickFromCategory([...catB, ...catDUnique]);
   } else {
     // 低難度（デフォルト）：A1つ + B1つ + C〜E1つ
     pickFromCategory(catA);

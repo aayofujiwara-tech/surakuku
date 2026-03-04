@@ -151,7 +151,7 @@ export const DIFFICULTY = {
   },
   hard: {
     label: '7〜9の段',
-    answerMode: 'input', // 数値直接入力
+    answerMode: 'choice', // 4択（紛らわしい選択肢）
     timeLimit: 5,
     bossTimeLimit: 3,
     enemyDamage: 15,
