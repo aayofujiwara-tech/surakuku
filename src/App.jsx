@@ -66,6 +66,22 @@ export default function App() {
     unlockAllStages(save);
   };
 
+  const handleViewSlimeFromTitle = () => {
+    const save = loadSave();
+    if (save) {
+      loadSaveAction(save);
+      viewSlime();
+    }
+  };
+
+  const handleViewCollectionFromTitle = () => {
+    const save = loadSave();
+    if (save) {
+      loadSaveAction(save);
+      viewCollection();
+    }
+  };
+
   const handleSelectStage = (stageId) => {
     startBattle(stageId);
   };
@@ -110,7 +126,7 @@ export default function App() {
   return (
     <div className="game-container">
       {state.screen === 'title' && (
-        <TitleScreen onNewGame={handleNewGame} onContinue={handleContinue} onTraining={openTrainingSelect} onSeniorMode={openSeniorMode} onUnlockAll={handleUnlockAll} />
+        <TitleScreen onNewGame={handleNewGame} onContinue={handleContinue} onTraining={openTrainingSelect} onSeniorMode={openSeniorMode} onViewSlime={handleViewSlimeFromTitle} onCollection={handleViewCollectionFromTitle} onUnlockAll={handleUnlockAll} />
       )}
 
       {state.screen === 'attributeSelect' && (

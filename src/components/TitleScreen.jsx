@@ -5,7 +5,7 @@ const TAP_THRESHOLD = 10;
 const TAP_TIMEOUT = 3000;
 const SHAKE_START = 7;
 
-export default function TitleScreen({ onNewGame, onContinue, onTraining, onSeniorMode, onUnlockAll }) {
+export default function TitleScreen({ onNewGame, onContinue, onTraining, onSeniorMode, onViewSlime, onCollection, onUnlockAll }) {
   const hasSave = !!loadSave();
   const [showDialog, setShowDialog] = useState(false);
   const [logoClass, setLogoClass] = useState('');
@@ -88,6 +88,18 @@ export default function TitleScreen({ onNewGame, onContinue, onTraining, onSenio
             <button className="title-btn secondary-btn" onClick={onNewGame}>
               はじめから
             </button>
+            <button className="title-btn secondary-btn" onClick={onTraining}>
+              とっくんモード
+            </button>
+            <button className="title-btn secondary-btn" onClick={onViewSlime}>
+              スライム
+            </button>
+            <button className="title-btn secondary-btn" onClick={onCollection}>
+              ずかん
+            </button>
+            <button className="title-btn secondary-btn" onClick={onSeniorMode}>
+              のうトレ
+            </button>
           </>
         ) : (
           <>
@@ -97,14 +109,14 @@ export default function TitleScreen({ onNewGame, onContinue, onTraining, onSenio
             <button className="title-btn secondary-btn" disabled>
               つづきから
             </button>
+            <button className="title-btn secondary-btn" onClick={onTraining}>
+              とっくんモード
+            </button>
+            <button className="title-btn secondary-btn" onClick={onSeniorMode}>
+              のうトレ
+            </button>
           </>
         )}
-        <button className="title-btn secondary-btn" onClick={onTraining}>
-          とっくんモード
-        </button>
-        <button className="title-btn secondary-btn" onClick={onSeniorMode}>
-          のうトレ
-        </button>
       </div>
 
       <div className="title-footer">
