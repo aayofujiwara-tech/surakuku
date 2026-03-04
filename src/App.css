@@ -343,6 +343,24 @@
   padding: 1rem;
   background: linear-gradient(180deg, #1A1A2E 0%, #16213E 50%, #0F3460 100%);
   color: white;
+  position: relative;
+}
+
+.battle-quit-btn {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 1rem;
+  padding: 0.3rem 0.5rem;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.battle-quit-btn:active {
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .battle-phase-label {

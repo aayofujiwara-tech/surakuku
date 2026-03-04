@@ -4,7 +4,7 @@ import { generateStageQuestions, generateBossRushQuestion, generateChoices } fro
 import SlimeSprite from './SlimeSprite';
 import EnemySprite from './EnemySprite';
 
-export default function BattleScreen({ stageId, save, onWin, onLose }) {
+export default function BattleScreen({ stageId, save, onWin, onLose, onQuit }) {
   const stage = STAGES.find((s) => s.id === stageId);
   const difficulty = getDifficulty(stage.dan || 1);
   const finishLine = Math.floor(stage.hp * FINISH_LINE_RATIO);
@@ -32,6 +32,7 @@ export default function BattleScreen({ stageId, save, onWin, onLose }) {
   const [isAnswering, setIsAnswering] = useState(true);
   const [battlePhase, setBattlePhase] = useState('playing');
   const [enemyDefeated, setEnemyDefeated] = useState(false);
+  const [showQuitDialog, setShowQuitDialog] = useState(false);
 
   // 統計
   const [stats, setStats] = useState({ maxCombo: 0, totalDamage: 0, skillCount: 0, missCount: 0 });
@@ -48,6 +49,7 @@ export default function BattleScreen({ stageId, save, onWin, onLose }) {
   const isAnsweringRef = useRef(isAnswering);
   const stagePhaseRef = useRef(stagePhase);
   const lastBRef = useRef(null);
+  const pausedRef = useRef(false);
 
   comboRef.current = combo;
   enemyHpRef.current = enemyHp;
@@ -231,6 +233,7 @@ export default function BattleScreen({ stageId, save, onWin, onLose }) {
     setTimeLeft(limit);
 
     timerRef.current = setInterval(() => {
+      if (pausedRef.current) return;
       setTimeLeft((prev) => {
         if (prev <= 0.1) {
           clearInterval(timerRef.current);
@@ -244,6 +247,21 @@ export default function BattleScreen({ stageId, save, onWin, onLose }) {
 
     return () => clearInterval(timerRef.current);
   }, [currentIndex, battlePhase, isAnswering]);
+
+  const handleQuitOpen = () => {
+    pausedRef.current = true;
+    setShowQuitDialog(true);
+  };
+
+  const handleQuitCancel = () => {
+    pausedRef.current = false;
+    setShowQuitDialog(false);
+  };
+
+  const handleQuitConfirm = () => {
+    clearInterval(timerRef.current);
+    onQuit();
+  };
 
   const handleChoiceClick = (value) => {
     if (!isAnsweringRef.current) return;
@@ -273,6 +291,11 @@ export default function BattleScreen({ stageId, save, onWin, onLose }) {
 
   return (
     <div className="battle-screen">
+      {/* やめるボタン */}
+      {!enemyDefeated && battlePhase === 'playing' && (
+        <button className="battle-quit-btn" onClick={handleQuitOpen}>✕</button>
+      )}
+
       {/* フェーズ表示 */}
       <div className={`battle-phase-label ${stagePhase === 'bossRush' ? 'phase-boss-rush' : ''}`}>
         {phaseLabel}
@@ -384,6 +407,22 @@ export default function BattleScreen({ stageId, save, onWin, onLose }) {
         />
         <span className="timer-text">{timeLeft.toFixed(1)}秒</span>
       </div>
+
+      {/* やめる確認ダイアログ */}
+      {showQuitDialog && (
+        <div className="unlock-dialog-overlay">
+          <div className="unlock-dialog">
+            <p className="unlock-dialog-title">バトルをやめますか？</p>
+            <p className="unlock-dialog-message">
+              しんちょくは ほぞんされません
+            </p>
+            <div className="unlock-dialog-buttons">
+              <button className="primary-btn" onClick={handleQuitCancel}>つづける</button>
+              <button className="secondary-btn" onClick={handleQuitConfirm}>やめる</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

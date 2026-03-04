@@ -135,6 +135,7 @@ export default function App() {
           save={state.save}
           onWin={handleBattleWin}
           onLose={handleBattleLose}
+          onQuit={returnToMap}
         />
       )}
 
