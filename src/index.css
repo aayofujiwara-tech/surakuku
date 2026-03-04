@@ -33,8 +33,10 @@ body {
   display: flex;
   justify-content: center;
   min-width: 320px;
+  min-height: 100dvh;
   min-height: 100vh;
   background: linear-gradient(135deg, #E8EAF6, #F3E5F5, #E1F5FE);
+  overscroll-behavior: none;
 }
 
 #root {
@@ -49,6 +51,10 @@ button {
   font-family: inherit;
   font-weight: 600;
   transition: all 0.2s ease;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
 }
 
 button:active {
@@ -59,4 +65,9 @@ button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   transform: none;
+}
+
+input {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
