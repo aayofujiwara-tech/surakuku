@@ -14,6 +14,7 @@ const DEFAULT_SAVE = {
   stageRecords: {},      // ステージごとの記録
   trainingRecords: {},   // とっくんモードの記録（段ごと）
   timeAttackBest: null,  // タイムアタック最速記録（ミリ秒）
+  hasSeenHint: false,    // ムゲン撃破後の裏技ヒントを表示済みか
 };
 
 export function loadSave() {
@@ -105,6 +106,7 @@ export function unlockAllStages(existingSave) {
     ...base,
     attribute: null,
     clearedDans: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0],
+    hasSeenHint: true, // 全開放経由では裏技ヒントを表示しない
   };
   saveSave(updated);
   return updated;

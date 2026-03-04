@@ -162,6 +162,12 @@ export default function App() {
         <GrowthScreen
           save={state.save}
           battleResult={state.battleResult}
+          stageDan={STAGES.find((s) => s.id === state.currentStageId)?.dan}
+          onHintSeen={() => {
+            const updated = { ...state.save, hasSeenHint: true };
+            saveSave(updated);
+            updateSave(updated);
+          }}
           onContinue={returnToMap}
         />
       )}
