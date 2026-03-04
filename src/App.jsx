@@ -35,6 +35,8 @@ export default function App() {
     openSeniorMode,
     unlockAllStages,
     backToTitle,
+    confirmBattleQuit,
+    setBattleBackHandler,
   } = useGameState();
 
   const handleNewGame = () => {
@@ -151,7 +153,8 @@ export default function App() {
           save={state.save}
           onWin={handleBattleWin}
           onLose={handleBattleLose}
-          onQuit={returnToMap}
+          onQuit={confirmBattleQuit}
+          setBattleBackHandler={setBattleBackHandler}
         />
       )}
 

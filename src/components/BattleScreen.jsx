@@ -1,10 +1,10 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { STAGES, COMBO_THRESHOLDS, PLAYER_MAX_HP, FINISH_LINE_RATIO, BOSS_RUSH_COMBO_MULTIPLIER, getDifficulty } from '../data/gameData';
 import { generateStageQuestions, generateBossRushQuestion, generateChoices } from '../utils/questionGenerator';
 import SlimeSprite from './SlimeSprite';
 import EnemySprite from './EnemySprite';
 
-export default function BattleScreen({ stageId, save, onWin, onLose, onQuit }) {
+export default function BattleScreen({ stageId, save, onWin, onLose, onQuit, setBattleBackHandler }) {
   const stage = STAGES.find((s) => s.id === stageId);
   const difficulty = getDifficulty(stage.dan || 1);
   const finishLine = Math.floor(stage.hp * FINISH_LINE_RATIO);
@@ -248,10 +248,18 @@ export default function BattleScreen({ stageId, save, onWin, onLose, onQuit }) {
     return () => clearInterval(timerRef.current);
   }, [currentIndex, battlePhase, isAnswering]);
 
-  const handleQuitOpen = () => {
+  const handleQuitOpen = useCallback(() => {
     pausedRef.current = true;
     setShowQuitDialog(true);
-  };
+  }, []);
+
+  // ブラウザ戻るボタン用ハンドラを登録
+  useEffect(() => {
+    if (setBattleBackHandler) {
+      setBattleBackHandler(handleQuitOpen);
+      return () => setBattleBackHandler(null);
+    }
+  }, [setBattleBackHandler, handleQuitOpen]);
 
   const handleQuitCancel = () => {
     pausedRef.current = false;
